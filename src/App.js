@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 
 function App() {
   const [tasks, setTasks] = useState([]);
@@ -12,7 +12,7 @@ function App() {
 
   const fetchTasks = async () => {
     try {
-      const response = await fetch(`${API_URL}/api/tasks`);
+      const response = await fetch(\/api/tasks);
       const data = await response.json();
       setTasks(data);
     } catch (error) {
@@ -23,7 +23,7 @@ function App() {
   const addTask = async () => {
     if (!title.trim()) return;
     try {
-      const response = await fetch(`${API_URL}/api/tasks`, {
+      const response = await fetch(\/api/tasks, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ id: 0, title, completed: false })
@@ -38,7 +38,7 @@ function App() {
 
   const deleteTask = async (id) => {
     try {
-      await fetch(`${API_URL}/api/tasks/${id}`, { method: 'DELETE' });
+      await fetch(\/api/tasks/\, { method: 'DELETE' });
       setTasks(tasks.filter(t => t.id !== id));
     } catch (error) {
       console.error('Error deleting task:', error);
@@ -46,11 +46,11 @@ function App() {
   };
 
   const catMessages = [
-    "Purr-fect productivity!",
-    "No tasks? Cat nap time!",
-    "Meow-velous work ethic!",
-    "You're feline productive!",
-    "Paws and get organized!"
+    'Purr-fect productivity!',
+    'No tasks? Cat nap time!',
+    'Meow-velous work ethic!',
+    'You are feline productive!',
+    'Paws and get organized!'
   ];
 
   const randomCat = catMessages[Math.floor(Math.random() * catMessages.length)];
@@ -69,12 +69,8 @@ function App() {
       padding: '2rem 1rem'
     }}>
       <div style={{ maxWidth: '600px', margin: '0 auto' }}>
-
-        {/* Header with Cat */}
         <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
-          <div style={{ fontSize: '48px', marginBottom: '8px' }}>
-            {String.fromCodePoint(0x1F431)}
-          </div>
+          <div style={{ fontSize: '48px', marginBottom: '8px' }}>🐱</div>
           <h1 style={{
             fontSize: '32px',
             fontWeight: '600',
@@ -89,7 +85,6 @@ function App() {
           </p>
         </div>
 
-        {/* Input Section */}
         <div style={{
           background: 'rgba(255,255,255,0.06)',
           border: '0.5px solid rgba(255,255,255,0.12)',
@@ -132,7 +127,6 @@ function App() {
           </div>
         </div>
 
-        {/* Filter Buttons */}
         <div style={{
           display: 'flex',
           gap: '6px',
@@ -159,7 +153,6 @@ function App() {
           ))}
         </div>
 
-        {/* Tasks List */}
         <div style={{
           background: 'rgba(255,255,255,0.04)',
           border: '0.5px solid rgba(255,255,255,0.08)',
@@ -172,9 +165,7 @@ function App() {
               textAlign: 'center',
               color: '#6b6888'
             }}>
-              <div style={{ fontSize: '36px', marginBottom: '8px' }}>
-                {String.fromCodePoint(0x1F63A)}
-              </div>
+              <div style={{ fontSize: '36px', marginBottom: '8px' }}>😸</div>
               <p style={{ fontSize: '14px', margin: 0 }}>
                 {filter === 'all' ? 'No tasks yet. Even cats need a plan!' :
                  filter === 'active' ? 'All tasks done! Time for a cat nap!' :
@@ -204,7 +195,7 @@ function App() {
                     fontSize: '16px',
                     minWidth: '24px'
                   }}>
-                    {task.completed ? String.fromCodePoint(0x1F63B) : String.fromCodePoint(0x1F43E)}
+                    {task.completed ? '😻' : '🐾'}
                   </div>
                   <span style={{
                     fontSize: '14px',
@@ -233,7 +224,6 @@ function App() {
           )}
         </div>
 
-        {/* Footer Stats */}
         {tasks.length > 0 && (
           <div style={{
             display: 'flex',
@@ -243,20 +233,21 @@ function App() {
             padding: '0 4px'
           }}>
             <span style={{ fontSize: '13px', color: '#6b6888' }}>
-              {tasks.length} task{tasks.length !== 1 ? 's' : ''} {String.fromCodePoint(0x1F43E)} {tasks.filter(t => t.completed).length} completed
+              {tasks.length} task{tasks.length !== 1 ? 's' : ''} 🐾 {tasks.filter(t => t.completed).length} completed
             </span>
           </div>
         )}
 
-        {/* Cat Footer */}
         <div style={{
           textAlign: 'center',
           marginTop: '3rem',
           fontSize: '12px',
           color: '#4a4766'
         }}>
-          {String.fromCodePoint(0x1F43E)} Crafted by Rob Ricola {String.fromCodePoint(0x1F43E)}
+          🐾 Crafted by Rob Ricola 🐾
         </div>
+      </div>
+    </div>
   );
 }
 
