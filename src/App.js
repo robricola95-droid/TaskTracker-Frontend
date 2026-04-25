@@ -4,7 +4,7 @@ function App() {
   const [tasks, setTasks] = useState([]);
   const [title, setTitle] = useState("");
   const [filter, setFilter] = useState("all");
-  const API_URL = "http://tasktracker-api-robricola95.eastus.azurecontainer.io:5116";
+  const API_URL = "https://tasktracker-api-robricola95.eastus.azurecontainer.io:5116";
 
   useEffect(() => {
     fetchTasks();
