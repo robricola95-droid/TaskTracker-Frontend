@@ -255,10 +255,8 @@ function App() {
           fontSize: '12px',
           color: '#4a4766'
         }}>
-          Made with {String.fromCodePoint(0x1F49C)} and {String.fromCodePoint(0x1F431)} by Rob
+          {String.fromCodePoint(0x1F43E)} Crafted by Rob Ricola {String.fromCodePoint(0x1F43E)}
         </div>
-      </div>
-    </div>
   );
 }
 
