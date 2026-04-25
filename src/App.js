@@ -91,12 +91,4 @@ function App() {
           )}
         </div>
 
-        {tasks.length > 0 && <div style={{ marginTop: '16px', padding: '0 4px', fontSize: '13px', color: '#6b6888', textAlign: 'center' }}>{tasks.length} task{tasks.length !== 1 ? 's' : ''} - {tasks.filter(t => t.completed).length} completed</div>}
-
-        <div style={{ textAlign: 'center', marginTop: '3rem', fontSize: '12px', color: '#4a4766' }}>Crafted by Rob Ricola</div>
-      </div>
-    </div>
-  );
-}
-
-export default App;
+        {tasks.length > 0 && <di
