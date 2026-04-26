@@ -1,7 +1,54 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useMemo } from "react";
 import { motion, AnimatePresence, useAnimation } from "framer-motion";
 
-const API_URL = "https://tasktracker-api.happymeadow-f4db95a5.eastus2.azurecontainerapps.io";
+const API_URL = "<https://tasktracker-api.happymeadow-f4db95a5.eastus2.azurecontainerapps.io>";
+
+const CONFETTI_COLORS = ["#6C5CE7", "#a29bfe", "#00b894", "#fdcb6e", "#e17055", "#fd79a8", "#74b9ff", "#ffeaa7"];
+
+function ConfettiBurst({ big }) {
+  const count = big ? 90 : 36;
+  const particles = useMemo(
+    () =>
+      Array.from({ length: count }, (_, i) => {
+        const angle = Math.random() * Math.PI * 2;
+        const velocity = (big ? 320 : 200) + Math.random() * (big ? 360 : 240);
+        return {
+          id: i,
+          dx: Math.cos(angle) * velocity,
+          dy: Math.sin(angle) * velocity,
+          color: CONFETTI_COLORS[Math.floor(Math.random() * CONFETTI_COLORS.length)],
+          size: 6 + Math.random() * 8,
+          rotate: (Math.random() - 0.5) * 1200,
+          shape: Math.random() > 0.5 ? "50%" : "2px",
+          duration: 1.4 + Math.random() * 0.6,
+        };
+      }),
+    [count, big]
+  );
+
+  return (
+    <div style={{ position: "fixed", inset: 0, pointerEvents: "none", zIndex: 999, overflow: "hidden" }}>
+      {particles.map((p) => (
+        <motion.div
+          key={<p.id>}
+          initial={{ x: 0, y: 0, opacity: 1, rotate: 0, scale: 1 }}
+          animate={{ x: p.dx, y: p.dy + 480, opacity: 0, rotate: p.rotate, scale: 0.4 }}
+          transition={{ duration: p.duration, ease: [0.15, 0.8, 0.4, 1] }}
+          style={{
+            position: "absolute",
+            left: "50%",
+            top: "50%",
+            width: p.size,
+            height: p.size,
+            background: p.color,
+            borderRadius: p.shape,
+            boxShadow: `0 0 6px ${p.color}80`,
+          }}
+        />
+      ))}
+    </div>
+  );
+}
 
 export default function App() {
   const [tasks, setTasks]       = useState([]);
@@ -10,8 +57,17 @@ export default function App() {
   const [loading, setLoading]   = useState(true);
   const [errorMsg, setErrorMsg] = useState("");
   const [justAdded, setJustAdded] = useState(false);
+  const [confettiBursts, setConfettiBursts] = useState([]);
   const inputControls = useAnimation();
   const inputRef = useRef(null);
+
+  const triggerConfetti = (big) => {
+    const burst = { id: Date.now() + Math.random(), big };
+    setConfettiBursts((prev) => [...prev, burst]);
+    setTimeout(() => {
+      setConfettiBursts((prev) => prev.filter((b) => <b.id> !== <burst.id>));
+    }, 2200);
+  };
 
   useEffect(() => { fetchTasks(); }, []);
 
@@ -60,12 +116,19 @@ export default function App() {
   const deleteTask = async (id) => {
     try {
       await fetch(API_URL + "/api/tasks/" + id, { method: "DELETE" });
-      setTasks(prev => prev.filter(t => t.id !== id));
+      setTasks(prev => prev.filter(t => <t.id> !== id));
     } catch (e) { console.error(e); }
   };
 
-  const toggleTask = (id) =>
-    setTasks(prev => prev.map(t => t.id === id ? { ...t, completed: !t.completed } : t));
+  const toggleTask = (id) => {
+    const task = tasks.find((t) => <t.id> === id);
+    const isCompleting = task && !task.completed;
+    if (isCompleting) {
+      const willBeAllDone = tasks.length > 0 && tasks.every((t) => <t.id> === id || t.completed);
+      triggerConfetti(willBeAllDone);
+    }
+    setTasks((prev) => prev.map((t) => (<t.id> === id ? { ...t, completed: !t.completed } : t)));
+  };
 
   const filteredTasks = tasks.filter(t => {
     if (filter === "active") return !t.completed;
@@ -78,6 +141,11 @@ export default function App() {
 
   return (
     <div className="animated-bg" style={{ minHeight: "100vh", fontFamily: "sans-serif", padding: "2rem 1rem" }}>
+      <AnimatePresence>
+        {confettiBursts.map((b) => (
+          <ConfettiBurst key={<b.id>} big={b.big} />
+        ))}
+      </AnimatePresence>
       <div style={{ maxWidth: "620px", margin: "0 auto" }}>
 
         {/* Header */}
@@ -225,7 +293,7 @@ export default function App() {
               <AnimatePresence mode="popLayout">
                 {filteredTasks.map((task) => (
                   <motion.div
-                    key={task.id}
+                    key={<task.id>}
                     layout
                     initial={{ opacity: 0, y: -16, scale: 0.96 }}
                     animate={{ opacity: 1, y: 0, scale: 1 }}
@@ -246,7 +314,7 @@ export default function App() {
                     <motion.div
                       whileHover={{ scale: 1.15 }}
                       whileTap={{ scale: 0.88 }}
-                      onClick={() => toggleTask(task.id)}
+                      onClick={() => toggleTask(<task.id>)}
                       style={{
                         width: "24px", height: "24px", borderRadius: "50%", flexShrink: 0,
                         border: task.completed ? "none" : "2px solid rgba(108,92,231,0.6)",
@@ -271,7 +339,7 @@ export default function App() {
 
                     {/* Title */}
                     <span
-                      onClick={() => toggleTask(task.id)}
+                      onClick={() => toggleTask(<task.id>)}
                       style={{
                         flex: 1, fontSize: "15px", cursor: "pointer",
                         color: task.completed ? "#7B68EE" : "#e8e6f0",
@@ -286,7 +354,7 @@ export default function App() {
                     <motion.button
                       whileHover={{ scale: 1.1, background: "rgba(231,76,60,0.3)" }}
                       whileTap={{ scale: 0.9 }}
-                      onClick={() => deleteTask(task.id)}
+                      onClick={() => deleteTask(<task.id>)}
                       style={{
                         marginLeft: "12px", background: "rgba(231,76,60,0.12)", color: "#e74c3c",
                         fontSize: "18px", lineHeight: 1, padding: "4px 10px", borderRadius: "8px",
