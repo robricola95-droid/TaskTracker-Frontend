@@ -151,6 +151,7 @@ export default function TaskListPanel({
   loading, justAdded,
   inputControls, inputRef, searchRef,
   searchQuery, setSearchQuery,
+  isMobile = false,
 }) {
   const [selectionMode, setSelectionMode] = useState(false);
   const [selected, setSelected]           = useState(new Set());
@@ -215,7 +216,7 @@ export default function TaskListPanel({
   };
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", height: "100%" }}>
+    <div style={{ display: "flex", flexDirection: "column", height: isMobile ? "auto" : "100%" }}>
       <div style={{ marginBottom: 12, paddingBottom: 12, borderBottom: "1px solid var(--panel-border)" }}>
         <div style={{ display: "flex", alignItems: "center", gap: 8, justifyContent: "space-between" }}>
           <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
@@ -402,7 +403,7 @@ export default function TaskListPanel({
       </AnimatePresence>
 
       {/* Task list */}
-      <div style={{ flex: 1, overflowY: "auto", paddingRight: 4 }}>
+      <div style={{ flex: isMobile ? "none" : 1, overflowY: isMobile ? "visible" : "auto", paddingRight: 4 }}>
         {loading ? (
           <div style={{ padding: "3rem", textAlign: "center" }}>
             <motion.div animate={{ rotate: 360 }} transition={{ repeat: Infinity, duration: 0.9 }} style={{ width: 32, height: 32, border: "3px solid var(--surface-border)", borderTopColor: "var(--accent-primary)", borderRadius: "50%", margin: "0 auto 12px" }} />
@@ -444,13 +445,15 @@ export default function TaskListPanel({
         )}
       </div>
 
-      {/* Footer hint */}
-      <div style={{ marginTop: 10, fontSize: 10, color: "var(--text-muted)", textAlign: "center", letterSpacing: 0.3 }}>
-        <kbd style={{ background: "var(--surface-light)", padding: "1px 5px", borderRadius: 3 }}>N</kbd> new ·{" "}
-        <kbd style={{ background: "var(--surface-light)", padding: "1px 5px", borderRadius: 3 }}>/</kbd> search ·{" "}
-        <kbd style={{ background: "var(--surface-light)", padding: "1px 5px", borderRadius: 3 }}>Ctrl+A</kbd> select all ·{" "}
-        <kbd style={{ background: "var(--surface-light)", padding: "1px 5px", borderRadius: 3 }}>Esc</kbd> clear
-      </div>
+      {/* Footer hint - desktop only */}
+      {!isMobile && (
+        <div style={{ marginTop: 10, fontSize: 10, color: "var(--text-muted)", textAlign: "center", letterSpacing: 0.3 }}>
+          <kbd style={{ background: "var(--surface-light)", padding: "1px 5px", borderRadius: 3 }}>N</kbd> new ·{" "}
+          <kbd style={{ background: "var(--surface-light)", padding: "1px 5px", borderRadius: 3 }}>/</kbd> search ·{" "}
+          <kbd style={{ background: "var(--surface-light)", padding: "1px 5px", borderRadius: 3 }}>Ctrl+A</kbd> select all ·{" "}
+          <kbd style={{ background: "var(--surface-light)", padding: "1px 5px", borderRadius: 3 }}>Esc</kbd> clear
+        </div>
+      )}
     </div>
   );
 }

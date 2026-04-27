@@ -2,13 +2,30 @@
 @tailwind components;
 @tailwind utilities;
 
-body {
+html, body {
   margin: 0;
+  padding: 0;
+  height: 100%;
+  width: 100%;
+}
+
+body {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
     'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  overscroll-behavior: none;
+  -webkit-tap-highlight-color: transparent;
+  overscroll-behavior-y: none;
+}
+
+#root {
+  min-height: 100vh;
+  min-height: 100dvh;
+}
+
+/* iOS: prevent input zoom on focus by enforcing 16px minimum */
+input, textarea, select {
+  font-size: 16px;
 }
 
 /* Custom paw cursor only on devices with a real mouse */
@@ -17,8 +34,16 @@ body {
   button, input, [role="button"], a { cursor: none !important; }
 }
 
+/* Reduce icon font sizes on small screens but keep inputs at 16px */
 @media (max-width: 900px) {
   body { font-size: 14px; }
+  input, textarea, select { font-size: 16px !important; }
+}
+
+/* Safe area insets for iPhone notch / home indicator */
+@supports (padding: max(0px)) {
+  .safe-top    { padding-top:    max(8px,  env(safe-area-inset-top)); }
+  .safe-bottom { padding-bottom: max(12px, env(safe-area-inset-bottom)); }
 }
 
 /* ===== THEME: DARK (default) ===== */
@@ -116,7 +141,13 @@ input:focus { outline: none; }
   opacity: 0.5;
 }
 
-/* Smooth theme transition */
-* {
+/* Smooth theme transition (skip transform/position to avoid jank) */
+button, input, [data-themed] {
   transition: background-color 0.4s ease, border-color 0.4s ease, color 0.3s ease;
+}
+
+/* Backdrop filter cross-browser */
+.bg-panel-blur {
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
 }

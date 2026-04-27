@@ -277,6 +277,7 @@ function AppContent() {
     loading, justAdded,
     inputControls, inputRef, searchRef,
     searchQuery, setSearchQuery,
+    isMobile,
   };
 
   const StatsPanelContents = () => (
@@ -309,12 +310,15 @@ function AppContent() {
     <div
       className="animated-bg"
       style={{
-        minHeight: "100vh",
+        minHeight: isMobile ? "100dvh" : "100vh",
         height: isMobile ? "auto" : "100vh",
         display: "flex",
         flexDirection: "column",
-        overflow: isMobile ? "auto" : "hidden",
+        overflow: isMobile ? "visible" : "hidden",
         fontFamily: "sans-serif",
+        paddingTop: "env(safe-area-inset-top)",
+        paddingBottom: "env(safe-area-inset-bottom)",
+        boxSizing: "border-box",
       }}
     >
       {!isTouch && <PawCursor />}
@@ -328,6 +332,7 @@ function AppContent() {
       <motion.header
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
+        className="bg-panel-blur"
         style={{
           padding: isMobile ? "10px 14px" : "12px 22px",
           display: "flex",
@@ -335,10 +340,9 @@ function AppContent() {
           justifyContent: "space-between",
           borderBottom: "1px solid var(--panel-border)",
           background: "var(--bg-panel)",
-          backdropFilter: "blur(8px)",
           flexWrap: isMobile ? "wrap" : "nowrap",
-          gap: isMobile ? 8 : 0,
-          position: isMobile ? "sticky" : "relative",
+          gap: isMobile ? 10 : 0,
+          position: "sticky",
           top: 0,
           zIndex: 50,
         }}
@@ -366,17 +370,19 @@ function AppContent() {
       {isMobile ? (
         <>
           {/* Mobile tab bar */}
-          <div style={{
-            display: "flex",
-            gap: 4,
-            padding: "8px 10px 4px",
-            background: "var(--bg-panel)",
-            borderBottom: "1px solid var(--panel-border)",
-            position: "sticky",
-            top: 56,
-            zIndex: 40,
-            backdropFilter: "blur(8px)",
-          }}>
+          <div
+            className="bg-panel-blur"
+            style={{
+              display: "flex",
+              gap: 6,
+              padding: "8px 10px",
+              background: "var(--bg-panel)",
+              borderBottom: "1px solid var(--panel-border)",
+              position: "sticky",
+              top: 0,
+              zIndex: 40,
+            }}
+          >
             {TABS.map((t) => (
               <motion.button
                 key={t.id}
@@ -388,14 +394,15 @@ function AppContent() {
                   color: activeTab === t.id ? "#fff" : "var(--text-secondary)",
                   border: "1px solid var(--panel-border)",
                   borderRadius: 10,
-                  padding: "10px 6px",
-                  fontSize: 12,
+                  padding: "12px 6px",
+                  fontSize: 13,
                   fontWeight: 600,
                   cursor: "pointer",
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
                   gap: 6,
+                  minHeight: 44,
                 }}
               >
                 <span style={{ fontSize: 16 }}>{t.icon}</span>
@@ -405,7 +412,7 @@ function AppContent() {
           </div>
 
           {/* Mobile content */}
-          <div style={{ flex: 1, padding: "0 4px 80px", minHeight: 0 }}>
+          <div style={{ padding: "4px 4px 24px", width: "100%", boxSizing: "border-box" }}>
             <AnimatePresence mode="wait">
               <motion.div
                 key={activeTab}
@@ -413,6 +420,7 @@ function AppContent() {
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: -20 }}
                 transition={{ duration: 0.2 }}
+                style={{ width: "100%" }}
               >
                 {activeTab === "tasks" && (
                   <div style={panelStyle}>
