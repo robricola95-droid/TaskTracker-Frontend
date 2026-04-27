@@ -120,14 +120,27 @@ export default function App() {
     } catch (e) { console.error(e); }
   };
 
-  const toggleTask = (id) => {
+  const toggleTask = async (id) => {
     const task = tasks.find((t) => <t.id> === id);
     const isCompleting = task && !task.completed;
     if (isCompleting) {
       const willBeAllDone = tasks.length > 0 && tasks.every((t) => <t.id> === id || t.completed);
       triggerConfetti(willBeAllDone);
     }
-    setTasks((prev) => prev.map((t) => (<t.id> === id ? { ...t, completed: !t.completed } : t)));
+
+    const updatedTask = { ...task, completed: !task.completed };
+    setTasks((prev) => prev.map((t) => (<t.id> === id ? updatedTask : t)));
+
+    try {
+      await fetch(API_URL + "/api/tasks/" + id, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(updatedTask),
+      });
+    } catch (e) {
+      console.error(e);
+      setErrorMsg("Failed to update task.");
+    }
   };
 
   const filteredTasks = tasks.filter(t => {
