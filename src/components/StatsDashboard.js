@@ -53,7 +53,7 @@ export default function StatsDashboard({ tasks }) {
   const progressPct    = tasks.length ? Math.round((completedCount / tasks.length) * 100) : 0;
   const streak         = getStreak(tasks);
 
-  const weeklyData = useMemo(() => buildWeeklyData(tasks), [tasks.length, completedCount]);
+  const weeklyData = useMemo(() => buildWeeklyData(tasks), [tasks]);
   const maxWeekly  = Math.max(1, ...weeklyData.map((d) => d.completed));
 
   return (
