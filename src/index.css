@@ -40,26 +40,26 @@ input, textarea, select {
   .safe-bottom { padding-bottom: max(12px, env(safe-area-inset-bottom)); }
 }
 
-/* ===== THEME: DARK (default) ===== */
+/* ===== THEME: DARK (default — brutalist concrete) ===== */
 :root,
 [data-theme="dark"] {
-  --bg-page-1: #0f0c29;
-  --bg-page-2: #1a1a4e;
-  --bg-page-3: #24243e;
-  --bg-page-4: #2d1b69;
-  --bg-panel: rgba(15,12,35,0.6);
-  --panel-border: rgba(255,255,255,0.07);
-  --text-primary: #fff;
-  --text-secondary: #9d8fff;
-  --text-muted: #6b6888;
-  --text-soft: #7B68EE;
-  --accent-primary: #6C5CE7;
-  --accent-secondary: #a29bfe;
-  --accent-warm: #fdcb6e;
-  --accent-pink: #ff9eb8;
-  --surface-light: rgba(255,255,255,0.05);
-  --surface-input: rgba(255,255,255,0.07);
-  --surface-border: rgba(255,255,255,0.12);
+  --bg-page-1: #1a1a1a;
+  --bg-page-2: #262626;
+  --bg-page-3: #1f1f1f;
+  --bg-page-4: #2a2a2a;
+  --bg-panel: rgba(28,28,28,0.92);
+  --panel-border: rgba(255,255,255,0.14);
+  --text-primary: #f0f0f0;
+  --text-secondary: #b8b8b8;
+  --text-muted: #707070;
+  --text-soft: #989898;
+  --accent-primary: #4a4a4a;
+  --accent-secondary: #767676;
+  --accent-warm: #d4a017;
+  --accent-pink: #b85a4a;
+  --surface-light: rgba(255,255,255,0.04);
+  --surface-input: rgba(255,255,255,0.06);
+  --surface-border: rgba(255,255,255,0.18);
 }
 
 /* ===== THEME: LIGHT ===== */
