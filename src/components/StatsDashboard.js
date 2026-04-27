@@ -10,7 +10,7 @@ function StatCard({ label, value, icon, color, delay = 0 }) {
       transition={{ delay, type: "spring", stiffness: 120 }}
       whileHover={{ scale: 1.05, y: -4 }}
       style={{
-        background: "rgba(255,255,255,0.05)",
+        background: "var(--surface-light)",
         border: `1px solid ${color}40`,
         borderRadius: 14,
         padding: "16px 14px",
@@ -21,7 +21,7 @@ function StatCard({ label, value, icon, color, delay = 0 }) {
     >
       <div style={{ fontSize: 26, marginBottom: 4 }}>{icon}</div>
       <div style={{ fontSize: 26, fontWeight: 700, color, lineHeight: 1 }}>{value}</div>
-      <div style={{ fontSize: 11, color: "#9d8fff", marginTop: 6, textTransform: "uppercase", letterSpacing: 1 }}>
+      <div style={{ fontSize: 11, color: "var(--text-secondary)", marginTop: 6, textTransform: "uppercase", letterSpacing: 1 }}>
         {label}
       </div>
     </motion.div>
@@ -59,7 +59,7 @@ export default function StatsDashboard({ tasks }) {
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 18 }}>
       <div style={{ textAlign: "center" }}>
-        <div style={{ fontSize: 11, color: "#9d8fff", letterSpacing: 1.5, textTransform: "uppercase", marginBottom: 6 }}>
+        <div style={{ fontSize: 11, color: "var(--text-secondary)", letterSpacing: 1.5, textTransform: "uppercase", marginBottom: 6 }}>
           Daily Progress
         </div>
         <motion.div
@@ -78,7 +78,7 @@ export default function StatsDashboard({ tasks }) {
         >
           {progressPct}<span style={{ fontSize: 28 }}>%</span>
         </motion.div>
-        <div style={{ fontSize: 13, color: "#7B68EE", marginTop: 4 }}>
+        <div style={{ fontSize: 13, color: "var(--text-soft)", marginTop: 4 }}>
           {progressPct === 100 && tasks.length > 0 ? "Purrfect day! 🐾" :
            progressPct >= 50 ? "You're on fire! 🔥" :
            progressPct > 0 ? "Keep going! 💪" : "Let's get started! ✨"}
@@ -97,13 +97,13 @@ export default function StatsDashboard({ tasks }) {
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.3 }}
         style={{
-          background: "rgba(255,255,255,0.04)",
-          border: "1px solid rgba(255,255,255,0.08)",
+          background: "var(--surface-light)",
+          border: "1px solid var(--panel-border)",
           borderRadius: 14,
           padding: 14,
         }}
       >
-        <div style={{ fontSize: 11, color: "#9d8fff", letterSpacing: 1.5, textTransform: "uppercase", marginBottom: 10, textAlign: "center" }}>
+        <div style={{ fontSize: 11, color: "var(--text-secondary)", letterSpacing: 1.5, textTransform: "uppercase", marginBottom: 10, textAlign: "center" }}>
           🐾 Paw Prints This Week
         </div>
         <div style={{ width: "100%", height: 120 }}>
@@ -143,7 +143,7 @@ export default function StatsDashboard({ tasks }) {
           textAlign: "center",
         }}
       >
-        <div style={{ fontSize: 11, color: "#9d8fff", letterSpacing: 1.5, textTransform: "uppercase", marginBottom: 6 }}>
+        <div style={{ fontSize: 11, color: "var(--text-secondary)", letterSpacing: 1.5, textTransform: "uppercase", marginBottom: 6 }}>
           🏆 Achievement
         </div>
         <div style={{ fontSize: 14, color: "#fff", fontWeight: 600 }}>

@@ -4,6 +4,11 @@ import { Panel, PanelGroup, PanelResizeHandle } from "react-resizable-panels";
 import AnimatedCat from "./components/AnimatedCat";
 import StatsDashboard from "./components/StatsDashboard";
 import DailyCat from "./components/DailyCat";
+import TaskListPanel from "./components/TaskListPanel";
+import PawCursor from "./components/PawCursor";
+import { ThemeProvider, ThemeSwitcher } from "./components/ThemeProvider";
+import { useSoundEffects } from "./hooks/useSoundEffects";
+import { useKeyboardShortcuts } from "./hooks/useKeyboardShortcuts";
 
 const API_URL = "https://tasktracker-api.happymeadow-f4db95a5.eastus2.azurecontainerapps.io";
 
@@ -54,18 +59,6 @@ function ConfettiBurst({ big }) {
   );
 }
 
-function PanelHeader({ icon, title, subtitle }) {
-  return (
-    <div style={{ marginBottom: 16, paddingBottom: 14, borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
-      <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-        <span style={{ fontSize: 20 }}>{icon}</span>
-        <h2 style={{ margin: 0, fontSize: 16, fontWeight: 700, color: "#fff", letterSpacing: 0.3 }}>{title}</h2>
-      </div>
-      {subtitle && <div style={{ fontSize: 11, color: "#9d8fff", marginTop: 4, marginLeft: 28 }}>{subtitle}</div>}
-    </div>
-  );
-}
-
 function ResizeHandle() {
   return (
     <PanelResizeHandle>
@@ -73,180 +66,43 @@ function ResizeHandle() {
         style={{
           width: 6,
           height: "100%",
-          cursor: "col-resize",
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
           transition: "background 0.2s",
         }}
-        onMouseEnter={(e) => (e.currentTarget.style.background = "rgba(108,92,231,0.3)")}
+        onMouseEnter={(e) => (e.currentTarget.style.background = "var(--accent-primary)")}
         onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}
       >
-        <div style={{ width: 2, height: 40, background: "rgba(255,255,255,0.15)", borderRadius: 2 }} />
+        <div style={{ width: 2, height: 40, background: "var(--surface-border)", borderRadius: 2 }} />
       </div>
     </PanelResizeHandle>
   );
 }
 
-function TaskListPanel({ tasks, title, setTitle, filter, setFilter, errorMsg, setErrorMsg, addTask, toggleTask, deleteTask, loading, justAdded, inputControls, inputRef }) {
-  const filteredTasks = tasks.filter((t) => {
-    if (filter === "active") return !t.completed;
-    if (filter === "done")   return t.completed;
-    return true;
-  });
-
+function MuteToggle({ muted, onToggle }) {
   return (
-    <div style={{ display: "flex", flexDirection: "column", height: "100%" }}>
-      <PanelHeader icon="😺" title="Cat Task Tracker" subtitle="Stay organized, stay purrductive" />
-
-      <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} style={{ marginBottom: 14 }}>
-        <div style={{ display: "flex", gap: 8 }}>
-          <motion.input
-            ref={inputRef}
-            animate={inputControls}
-            value={title}
-            onChange={(e) => { setTitle(e.target.value); setErrorMsg(""); }}
-            onKeyPress={(e) => e.key === "Enter" && addTask()}
-            placeholder="What needs to be done?"
-            style={{ flex: 1, background: "rgba(255,255,255,0.07)", border: "1px solid rgba(255,255,255,0.12)", borderRadius: 10, padding: "12px 14px", color: "#fff", fontSize: 14, outline: "none" }}
-          />
-          <motion.button
-            whileHover={{ scale: 1.05, boxShadow: "0 0 18px rgba(108,92,231,0.6)" }}
-            whileTap={{ scale: 0.94 }}
-            animate={justAdded ? { scale: [1, 1.18, 1], background: ["#6C5CE7", "#00b894", "#6C5CE7"] } : {}}
-            onClick={addTask}
-            style={{ background: "#6C5CE7", color: "#fff", fontSize: 14, fontWeight: 600, padding: "12px 20px", borderRadius: 10, border: "none", cursor: "pointer", whiteSpace: "nowrap" }}
-          >
-            + Add
-          </motion.button>
-        </div>
-        <AnimatePresence>
-          {errorMsg && (
-            <motion.p
-              initial={{ opacity: 0, y: -6 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0 }}
-              style={{ margin: "8px 0 0 4px", fontSize: 12, color: "#e74c3c" }}
-            >
-              ⚠ {errorMsg}
-            </motion.p>
-          )}
-        </AnimatePresence>
-      </motion.div>
-
-      <div style={{ display: "flex", gap: 6, marginBottom: 14, justifyContent: "center" }}>
-        {["all", "active", "done"].map((f) => (
-          <motion.button
-            key={f}
-            whileHover={{ scale: 1.06 }}
-            whileTap={{ scale: 0.94 }}
-            onClick={() => setFilter(f)}
-            style={{
-              fontSize: 12,
-              fontWeight: filter === f ? 600 : 400,
-              color: filter === f ? "#fff" : "#7B68EE",
-              background: filter === f ? "rgba(108,92,231,0.45)" : "rgba(255,255,255,0.05)",
-              padding: "6px 16px",
-              borderRadius: 99,
-              border: filter === f ? "1px solid rgba(108,92,231,0.6)" : "1px solid rgba(255,255,255,0.08)",
-              cursor: "pointer",
-            }}
-          >
-            {f.charAt(0).toUpperCase() + f.slice(1)}
-          </motion.button>
-        ))}
-      </div>
-
-      <div style={{ flex: 1, overflowY: "auto", paddingRight: 4 }}>
-        {loading ? (
-          <div style={{ padding: "3rem", textAlign: "center" }}>
-            <motion.div animate={{ rotate: 360 }} transition={{ repeat: Infinity, duration: 0.9 }} style={{ width: 32, height: 32, border: "3px solid rgba(108,92,231,0.2)", borderTopColor: "#6C5CE7", borderRadius: "50%", margin: "0 auto 12px" }} />
-            <p style={{ fontSize: 13, color: "#6b6888", margin: 0 }}>Loading your tasks...</p>
-          </div>
-        ) : filteredTasks.length === 0 ? (
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            style={{ padding: "3rem 1rem", textAlign: "center", background: "rgba(255,255,255,0.03)", borderRadius: 14, border: "1px dashed rgba(255,255,255,0.1)" }}
-          >
-            <div style={{ fontSize: 40, marginBottom: 10 }}>😸</div>
-            <p style={{ fontSize: 13, color: "#6b6888", margin: 0 }}>
-              {filter === "done" ? "Nothing completed yet — keep going!" : "No tasks here. Add one above!"}
-            </p>
-          </motion.div>
-        ) : (
-          <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-            <AnimatePresence mode="popLayout">
-              {filteredTasks.map((task) => (
-                <motion.div
-                  key={task.id}
-                  layout
-                  initial={{ opacity: 0, y: -16, scale: 0.96 }}
-                  animate={{ opacity: 1, y: 0, scale: 1 }}
-                  exit={{ opacity: 0, x: 60, scale: 0.9, transition: { duration: 0.22 } }}
-                  transition={{ type: "spring", stiffness: 300, damping: 28 }}
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    padding: "12px 14px",
-                    background: task.completed ? "rgba(108,92,231,0.1)" : "rgba(255,255,255,0.05)",
-                    border: `1px solid ${task.completed ? "rgba(108,92,231,0.3)" : "rgba(255,255,255,0.08)"}`,
-                    borderRadius: 12,
-                  }}
-                >
-                  <motion.div
-                    whileHover={{ scale: 1.15 }}
-                    whileTap={{ scale: 0.88 }}
-                    onClick={() => toggleTask(task.id)}
-                    style={{
-                      width: 22, height: 22, borderRadius: "50%", flexShrink: 0,
-                      border: task.completed ? "none" : "2px solid rgba(108,92,231,0.6)",
-                      background: task.completed ? "linear-gradient(135deg, #6C5CE7, #a29bfe)" : "transparent",
-                      cursor: "pointer", marginRight: 12,
-                      display: "flex", alignItems: "center", justifyContent: "center",
-                    }}
-                  >
-                    <AnimatePresence>
-                      {task.completed && (
-                        <motion.span initial={{ scale: 0, rotate: -90 }} animate={{ scale: 1, rotate: 0 }} exit={{ scale: 0 }} style={{ fontSize: 12, color: "#fff" }}>
-                          ✓
-                        </motion.span>
-                      )}
-                    </AnimatePresence>
-                  </motion.div>
-                  <span
-                    onClick={() => toggleTask(task.id)}
-                    style={{
-                      flex: 1, fontSize: 14, cursor: "pointer",
-                      color: task.completed ? "#7B68EE" : "#e8e6f0",
-                      textDecoration: task.completed ? "line-through" : "none",
-                    }}
-                  >
-                    {task.title}
-                  </span>
-                  <motion.button
-                    whileHover={{ scale: 1.1, background: "rgba(231,76,60,0.3)" }}
-                    whileTap={{ scale: 0.9 }}
-                    onClick={() => deleteTask(task.id)}
-                    style={{
-                      marginLeft: 8, background: "rgba(231,76,60,0.12)", color: "#e74c3c",
-                      fontSize: 16, lineHeight: 1, padding: "4px 9px", borderRadius: 8,
-                      border: "1px solid rgba(231,76,60,0.2)", cursor: "pointer",
-                    }}
-                  >
-                    ×
-                  </motion.button>
-                </motion.div>
-              ))}
-            </AnimatePresence>
-          </div>
-        )}
-      </div>
-    </div>
+    <motion.button
+      whileHover={{ scale: 1.08 }}
+      whileTap={{ scale: 0.92 }}
+      onClick={onToggle}
+      title={muted ? "Unmute sounds" : "Mute sounds"}
+      style={{
+        background: "var(--surface-light)",
+        color: "var(--text-secondary)",
+        border: "1px solid var(--panel-border)",
+        borderRadius: 99,
+        padding: "6px 10px",
+        fontSize: 14,
+        cursor: "pointer",
+      }}
+    >
+      {muted ? "🔇" : "🔊"}
+    </motion.button>
   );
 }
 
-export default function App() {
+function AppContent() {
   const [tasks, setTasks]       = useState([]);
   const [title, setTitle]       = useState("");
   const [filter, setFilter]     = useState("all");
@@ -254,8 +110,30 @@ export default function App() {
   const [errorMsg, setErrorMsg] = useState("");
   const [justAdded, setJustAdded] = useState(false);
   const [confettiBursts, setConfettiBursts] = useState([]);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [taskOrder, setTaskOrder] = useState(() => {
+    try { return JSON.parse(localStorage.getItem("tt-task-order") || "[]"); }
+    catch { return []; }
+  });
+
   const inputControls = useAnimation();
-  const inputRef = useRef(null);
+  const inputRef  = useRef(null);
+  const searchRef = useRef(null);
+
+  const { muted, setMuted, playAdd, playComplete, playMeow, playDelete } = useSoundEffects();
+
+  useEffect(() => {
+    localStorage.setItem("tt-task-order", JSON.stringify(taskOrder));
+  }, [taskOrder]);
+
+  useKeyboardShortcuts({
+    onNew: () => inputRef.current?.focus(),
+    onSearch: () => searchRef.current?.focus(),
+    onEscape: () => {
+      setSearchQuery("");
+      if (document.activeElement?.tagName === "INPUT") document.activeElement.blur();
+    },
+  });
 
   const triggerConfetti = (big) => {
     const burst = { id: Date.now() + Math.random(), big };
@@ -270,7 +148,8 @@ export default function App() {
   const fetchTasks = async () => {
     try {
       const res = await fetch(API_URL + "/api/tasks");
-      setTasks(await res.json());
+      const data = await res.json();
+      setTasks(data);
     } catch (e) {
       console.error(e);
       setErrorMsg("Could not reach the server.");
@@ -299,8 +178,10 @@ export default function App() {
       });
       const newTask = await res.json();
       setTasks((prev) => [newTask, ...prev]);
+      setTaskOrder((prev) => [newTask.id, ...prev]);
       setTitle("");
       setJustAdded(true);
+      playAdd();
       setTimeout(() => setJustAdded(false), 800);
     } catch (e) {
       console.error(e);
@@ -312,6 +193,8 @@ export default function App() {
     try {
       await fetch(API_URL + "/api/tasks/" + id, { method: "DELETE" });
       setTasks((prev) => prev.filter((t) => t.id !== id));
+      setTaskOrder((prev) => prev.filter((tid) => tid !== id));
+      playDelete();
     } catch (e) { console.error(e); }
   };
 
@@ -322,6 +205,7 @@ export default function App() {
     if (isCompleting) {
       const willBeAllDone = tasks.length > 0 && tasks.every((t) => t.id === id || t.completed);
       triggerConfetti(willBeAllDone);
+      if (willBeAllDone) playMeow(); else playComplete();
     }
     const updatedTask = { ...task, completed: !task.completed };
     setTasks((prev) => prev.map((t) => (t.id === id ? updatedTask : t)));
@@ -337,11 +221,43 @@ export default function App() {
     }
   };
 
+  const bulkDelete = async (ids) => {
+    await Promise.all(ids.map((id) =>
+      fetch(API_URL + "/api/tasks/" + id, { method: "DELETE" }).catch((e) => console.error(e))
+    ));
+    setTasks((prev) => prev.filter((t) => !ids.includes(t.id)));
+    setTaskOrder((prev) => prev.filter((id) => !ids.includes(id)));
+    playDelete();
+  };
+
+  const bulkComplete = async (ids) => {
+    const updates = ids.map((id) => {
+      const t = tasks.find((x) => x.id === id);
+      if (!t || t.completed) return null;
+      return { ...t, completed: true };
+    }).filter(Boolean);
+
+    if (updates.length === 0) return;
+    setTasks((prev) => prev.map((t) => {
+      const u = updates.find((x) => x.id === t.id);
+      return u || t;
+    }));
+    triggerConfetti(updates.length >= 3);
+    playComplete();
+    await Promise.all(updates.map((t) =>
+      fetch(API_URL + "/api/tasks/" + t.id, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(t),
+      }).catch((e) => console.error(e))
+    ));
+  };
+
   const panelStyle = {
-    background: "rgba(15,12,35,0.6)",
-    border: "1px solid rgba(255,255,255,0.07)",
+    background: "var(--bg-panel)",
+    border: "1px solid var(--panel-border)",
     borderRadius: 18,
-    padding: 20,
+    padding: 18,
     margin: 8,
     height: "calc(100% - 16px)",
     overflow: "auto",
@@ -350,6 +266,8 @@ export default function App() {
 
   return (
     <div className="animated-bg" style={{ minHeight: "100vh", height: "100vh", display: "flex", flexDirection: "column", overflow: "hidden", fontFamily: "sans-serif" }}>
+      <PawCursor />
+
       <AnimatePresence>
         {confettiBursts.map((b) => (
           <ConfettiBurst key={b.id} big={b.big} />
@@ -359,16 +277,32 @@ export default function App() {
       <motion.header
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
-        style={{ padding: "14px 24px", display: "flex", alignItems: "center", justifyContent: "space-between", borderBottom: "1px solid rgba(255,255,255,0.05)" }}
+        style={{
+          padding: "12px 22px",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          borderBottom: "1px solid var(--panel-border)",
+          background: "var(--bg-panel)",
+          backdropFilter: "blur(8px)",
+        }}
       >
         <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-          <span style={{ fontSize: 26 }}>😺</span>
+          <span style={{ fontSize: 24 }}>😺</span>
           <div>
-            <div style={{ fontSize: 18, fontWeight: 700, color: "#fff", letterSpacing: -0.3 }}>Cat Task Tracker</div>
-            <div style={{ fontSize: 11, color: "#9d8fff" }}>Drag the dividers to resize panels</div>
+            <div style={{ fontSize: 17, fontWeight: 700, color: "var(--text-primary)", letterSpacing: -0.3 }}>
+              Cat Task Tracker
+            </div>
+            <div style={{ fontSize: 11, color: "var(--text-secondary)" }}>
+              Drag dividers · Drag tasks to reorder · Press <kbd style={{ background: "var(--surface-light)", padding: "1px 5px", borderRadius: 3 }}>?</kbd> for shortcuts
+            </div>
           </div>
         </div>
-        <div style={{ fontSize: 11, color: "#6b6888" }}>Crafted by Rob Ricola 🐾</div>
+        <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+          <ThemeSwitcher />
+          <MuteToggle muted={muted} onToggle={() => setMuted((m) => !m)} />
+          <div style={{ fontSize: 11, color: "var(--text-muted)" }}>by Rob 🐾</div>
+        </div>
       </motion.header>
 
       <div style={{ flex: 1, minHeight: 0 }}>
@@ -376,12 +310,17 @@ export default function App() {
           <Panel defaultSize={38} minSize={25}>
             <div style={panelStyle}>
               <TaskListPanel
-                tasks={tasks} title={title} setTitle={setTitle}
+                tasks={tasks}
+                taskOrder={taskOrder}
+                setTaskOrder={setTaskOrder}
+                title={title} setTitle={setTitle}
                 filter={filter} setFilter={setFilter}
                 errorMsg={errorMsg} setErrorMsg={setErrorMsg}
                 addTask={addTask} toggleTask={toggleTask} deleteTask={deleteTask}
+                bulkDelete={bulkDelete} bulkComplete={bulkComplete}
                 loading={loading} justAdded={justAdded}
-                inputControls={inputControls} inputRef={inputRef}
+                inputControls={inputControls} inputRef={inputRef} searchRef={searchRef}
+                searchQuery={searchQuery} setSearchQuery={setSearchQuery}
               />
             </div>
           </Panel>
@@ -390,9 +329,19 @@ export default function App() {
 
           <Panel defaultSize={36} minSize={25}>
             <div style={panelStyle}>
-              <PanelHeader icon="📊" title="Productivity Pawprints" subtitle="Your stats at a glance" />
+              <div style={{ marginBottom: 12, paddingBottom: 12, borderBottom: "1px solid var(--panel-border)" }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                  <span style={{ fontSize: 20 }}>📊</span>
+                  <h2 style={{ margin: 0, fontSize: 16, fontWeight: 700, color: "var(--text-primary)" }}>
+                    Productivity Pawprints
+                  </h2>
+                </div>
+                <div style={{ fontSize: 11, color: "var(--text-soft)", marginTop: 4, marginLeft: 28 }}>
+                  Your stats at a glance
+                </div>
+              </div>
               <AnimatedCat tasks={tasks} />
-              <div style={{ marginTop: 24 }}>
+              <div style={{ marginTop: 22 }}>
                 <StatsDashboard tasks={tasks} />
               </div>
             </div>
@@ -408,5 +357,13 @@ export default function App() {
         </PanelGroup>
       </div>
     </div>
+  );
+}
+
+export default function App() {
+  return (
+    <ThemeProvider>
+      <AppContent />
+    </ThemeProvider>
   );
 }
