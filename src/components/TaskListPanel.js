@@ -16,6 +16,7 @@ import {
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
+import { GripVertical, X, Plus, Search, Download, ListChecks, Trash2, Check, CheckCheck, Inbox } from "lucide-react";
 
 function exportTasksToCSV(tasks) {
   const header = "id,title,completed\n";
@@ -68,14 +69,15 @@ function SortableTaskRow({ task, isSelected, selectionMode, onToggle, onDelete, 
         {...listeners}
         style={{
           color: "var(--text-muted)",
-          fontSize: 14,
-          padding: "0 4px",
+          padding: "0 2px",
           cursor: "grab",
           userSelect: "none",
+          display: "flex",
+          alignItems: "center",
         }}
         title="Drag to reorder"
       >
-        ⋮⋮
+        <GripVertical size={16} strokeWidth={2} />
       </div>
 
       {selectionMode && (
@@ -101,14 +103,14 @@ function SortableTaskRow({ task, isSelected, selectionMode, onToggle, onDelete, 
       >
         <AnimatePresence>
           {task.completed && (
-            <motion.span
+            <motion.div
               initial={{ scale: 0, rotate: -90 }}
               animate={{ scale: 1, rotate: 0 }}
               exit={{ scale: 0 }}
-              style={{ fontSize: 11, color: "#fff", fontWeight: 700 }}
+              style={{ display: "flex", alignItems: "center", justifyContent: "center" }}
             >
-              ✓
-            </motion.span>
+              <Check size={12} color="#fff" strokeWidth={3} />
+            </motion.div>
           )}
         </AnimatePresence>
       </motion.div>
@@ -125,16 +127,18 @@ function SortableTaskRow({ task, isSelected, selectionMode, onToggle, onDelete, 
       </span>
 
       <motion.button
-        whileHover={{ scale: 1.1, background: "rgba(231,76,60,0.3)" }}
-        whileTap={{ scale: 0.9 }}
+        whileHover={{ scale: 1.08, background: "rgba(231,76,60,0.25)" }}
+        whileTap={{ scale: 0.92 }}
         onClick={() => onDelete(task.id)}
         style={{
-          background: "rgba(231,76,60,0.12)", color: "#e74c3c",
-          fontSize: 14, lineHeight: 1, padding: "3px 8px", borderRadius: 8,
-          border: "1px solid rgba(231,76,60,0.2)", cursor: "pointer",
+          background: "rgba(231,76,60,0.1)", color: "#e74c3c",
+          padding: 6, borderRadius: 8,
+          border: "1px solid rgba(231,76,60,0.18)", cursor: "pointer",
+          display: "flex", alignItems: "center", justifyContent: "center",
         }}
+        title="Delete"
       >
-        ×
+        <Trash2 size={13} strokeWidth={2} />
       </motion.button>
     </motion.div>
   );
@@ -217,35 +221,36 @@ export default function TaskListPanel({
 
   return (
     <div style={{ display: "flex", flexDirection: "column", height: isMobile ? "auto" : "100%" }}>
-      <div style={{ marginBottom: 12, paddingBottom: 12, borderBottom: "1px solid var(--panel-border)" }}>
+      <div style={{ marginBottom: 14, paddingBottom: 12, borderBottom: "1px solid var(--panel-border)" }}>
         <div style={{ display: "flex", alignItems: "center", gap: 8, justifyContent: "space-between" }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-            <span style={{ fontSize: 20 }}>😺</span>
-            <h2 style={{ margin: 0, fontSize: 16, fontWeight: 700, color: "var(--text-primary)", letterSpacing: 0.3 }}>
-              Cat Task Tracker
+          <div>
+            <h2 style={{ margin: 0, fontSize: 14, fontWeight: 700, color: "var(--text-primary)", letterSpacing: 1, textTransform: "uppercase" }}>
+              Tasks
             </h2>
+            <div style={{ fontSize: 11, color: "var(--text-soft)", marginTop: 4 }}>
+              Drag to reorder · Click to complete
+            </div>
           </div>
           <div style={{ display: "flex", gap: 6 }}>
             <motion.button
-              whileHover={{ scale: 1.06 }}
+              whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.94 }}
               onClick={toggleSelectionMode}
-              title="Bulk select (Ctrl+A)"
+              title="Bulk select"
               style={{
                 background: selectionMode ? "var(--accent-primary)" : "var(--surface-light)",
                 color: selectionMode ? "#fff" : "var(--text-secondary)",
                 border: "1px solid var(--panel-border)",
                 borderRadius: 8,
-                padding: "5px 10px",
-                fontSize: 11,
-                fontWeight: 600,
+                padding: 7,
                 cursor: "pointer",
+                display: "flex", alignItems: "center", justifyContent: "center",
               }}
             >
-              ☑ Select
+              <ListChecks size={14} strokeWidth={2} />
             </motion.button>
             <motion.button
-              whileHover={{ scale: 1.06 }}
+              whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.94 }}
               onClick={() => exportTasksToCSV(tasks)}
               title="Download CSV"
@@ -254,18 +259,14 @@ export default function TaskListPanel({
                 color: "var(--text-secondary)",
                 border: "1px solid var(--panel-border)",
                 borderRadius: 8,
-                padding: "5px 10px",
-                fontSize: 11,
-                fontWeight: 600,
+                padding: 7,
                 cursor: "pointer",
+                display: "flex", alignItems: "center", justifyContent: "center",
               }}
             >
-              ⇩ CSV
+              <Download size={14} strokeWidth={2} />
             </motion.button>
           </div>
-        </div>
-        <div style={{ fontSize: 11, color: "var(--text-soft)", marginTop: 4, marginLeft: 28 }}>
-          Stay organized, stay purrductive
         </div>
       </div>
 
@@ -278,7 +279,7 @@ export default function TaskListPanel({
             value={title}
             onChange={(e) => { setTitle(e.target.value); setErrorMsg(""); }}
             onKeyPress={(e) => e.key === "Enter" && addTask()}
-            placeholder="What needs to be done? (press N to focus)"
+            placeholder="Add a new task..."
             style={{
               flex: 1,
               background: "var(--surface-input)",
@@ -291,13 +292,24 @@ export default function TaskListPanel({
             }}
           />
           <motion.button
-            whileHover={{ scale: 1.05, boxShadow: "0 0 18px rgba(108,92,231,0.6)" }}
+            whileHover={{ scale: 1.04 }}
             whileTap={{ scale: 0.94 }}
-            animate={justAdded ? { scale: [1, 1.18, 1], background: ["#6C5CE7", "#00b894", "#6C5CE7"] } : {}}
+            animate={justAdded ? { scale: [1, 1.15, 1] } : {}}
             onClick={addTask}
-            style={{ background: "var(--accent-primary)", color: "#fff", fontSize: 14, fontWeight: 600, padding: "11px 18px", borderRadius: 10, border: "none", cursor: "pointer" }}
+            style={{
+              background: "var(--accent-primary)",
+              color: "#fff",
+              padding: "11px 14px",
+              borderRadius: 10,
+              border: "none",
+              cursor: "pointer",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+            title="Add task"
           >
-            + Add
+            <Plus size={18} strokeWidth={2.4} />
           </motion.button>
         </div>
         <AnimatePresence>
@@ -308,7 +320,7 @@ export default function TaskListPanel({
               exit={{ opacity: 0 }}
               style={{ margin: "6px 0 0 4px", fontSize: 12, color: "#e74c3c" }}
             >
-              ⚠ {errorMsg}
+              {errorMsg}
             </motion.p>
           )}
         </AnimatePresence>
@@ -316,19 +328,30 @@ export default function TaskListPanel({
 
       {/* Search */}
       <div style={{ position: "relative", marginBottom: 10 }}>
+        <Search
+          size={13}
+          strokeWidth={2}
+          style={{
+            position: "absolute",
+            left: 11,
+            top: "50%",
+            transform: "translateY(-50%)",
+            color: "var(--text-muted)",
+            pointerEvents: "none",
+          }}
+        />
         <input
           ref={searchRef}
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          placeholder="🔍 Search tasks (press / to focus)"
+          placeholder="Search tasks"
           style={{
             width: "100%",
             background: "var(--surface-input)",
             border: "1px solid var(--surface-border)",
             borderRadius: 8,
-            padding: "8px 12px",
+            padding: "8px 12px 8px 32px",
             color: "var(--text-primary)",
-            fontSize: 12,
             outline: "none",
             boxSizing: "border-box",
           }}
@@ -338,9 +361,11 @@ export default function TaskListPanel({
             onClick={() => setSearchQuery("")}
             style={{
               position: "absolute", right: 8, top: "50%", transform: "translateY(-50%)",
-              background: "transparent", border: "none", color: "var(--text-muted)", cursor: "pointer", fontSize: 14,
+              background: "transparent", border: "none", color: "var(--text-muted)", cursor: "pointer",
+              display: "flex", alignItems: "center", padding: 4,
             }}
-          >×</button>
+            title="Clear search"
+          ><X size={14} strokeWidth={2} /></button>
         )}
       </div>
 
@@ -391,13 +416,13 @@ export default function TaskListPanel({
             <motion.button
               whileTap={{ scale: 0.9 }}
               onClick={handleBulkComplete}
-              style={{ background: "rgba(255,255,255,0.25)", color: "#fff", border: "none", padding: "5px 10px", borderRadius: 6, fontSize: 11, fontWeight: 600, cursor: "pointer" }}
-            >✓ Complete</motion.button>
+              style={{ background: "rgba(255,255,255,0.25)", color: "#fff", border: "none", padding: "6px 10px", borderRadius: 6, fontSize: 11, fontWeight: 600, cursor: "pointer", display: "flex", alignItems: "center", gap: 4 }}
+            ><CheckCheck size={13} strokeWidth={2.2} /> Complete</motion.button>
             <motion.button
               whileTap={{ scale: 0.9 }}
               onClick={handleBulkDelete}
-              style={{ background: "rgba(231,76,60,0.85)", color: "#fff", border: "none", padding: "5px 10px", borderRadius: 6, fontSize: 11, fontWeight: 600, cursor: "pointer" }}
-            >× Delete</motion.button>
+              style={{ background: "rgba(231,76,60,0.85)", color: "#fff", border: "none", padding: "6px 10px", borderRadius: 6, fontSize: 11, fontWeight: 600, cursor: "pointer", display: "flex", alignItems: "center", gap: 4 }}
+            ><Trash2 size={13} strokeWidth={2.2} /> Delete</motion.button>
           </motion.div>
         )}
       </AnimatePresence>
@@ -413,13 +438,15 @@ export default function TaskListPanel({
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
-            style={{ padding: "3rem 1rem", textAlign: "center", background: "var(--surface-light)", borderRadius: 14, border: "1px dashed var(--panel-border)" }}
+            style={{ padding: "2.5rem 1rem", textAlign: "center", background: "var(--surface-light)", borderRadius: 14, border: "1px dashed var(--panel-border)" }}
           >
-            <div style={{ fontSize: 40, marginBottom: 10 }}>{searchQuery ? "🔍" : "😸"}</div>
+            <div style={{ display: "flex", justifyContent: "center", marginBottom: 10, color: "var(--text-muted)" }}>
+              {searchQuery ? <Search size={32} strokeWidth={1.5} /> : <Inbox size={32} strokeWidth={1.5} />}
+            </div>
             <p style={{ fontSize: 13, color: "var(--text-muted)", margin: 0 }}>
               {searchQuery ? `No tasks match "${searchQuery}"` :
-               filter === "done" ? "Nothing completed yet — keep going!" :
-                                   "No tasks here. Add one above!"}
+               filter === "done" ? "Nothing completed yet" :
+                                   "No tasks. Add one above."}
             </p>
           </motion.div>
         ) : (

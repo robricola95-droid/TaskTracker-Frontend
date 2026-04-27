@@ -28,12 +28,6 @@ input, textarea, select {
   font-size: 16px;
 }
 
-/* Custom paw cursor only on devices with a real mouse */
-@media (hover: hover) and (pointer: fine) {
-  body { cursor: none; }
-  button, input, [role="button"], a { cursor: none !important; }
-}
-
 /* Reduce icon font sizes on small screens but keep inputs at 16px */
 @media (max-width: 900px) {
   body { font-size: 14px; }

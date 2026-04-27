@@ -1,15 +1,15 @@
 import React, { useState, useEffect, useRef, useMemo } from "react";
 import { motion, AnimatePresence, useAnimation } from "framer-motion";
 import { Panel, PanelGroup, PanelResizeHandle } from "react-resizable-panels";
+import { Volume2, VolumeX, ListTodo, BarChart3, Cat } from "lucide-react";
 import AnimatedCat from "./components/AnimatedCat";
 import StatsDashboard from "./components/StatsDashboard";
 import DailyCat from "./components/DailyCat";
 import TaskListPanel from "./components/TaskListPanel";
-import PawCursor from "./components/PawCursor";
 import { ThemeProvider, ThemeSwitcher } from "./components/ThemeProvider";
 import { useSoundEffects } from "./hooks/useSoundEffects";
 import { useKeyboardShortcuts } from "./hooks/useKeyboardShortcuts";
-import { useIsMobile, useIsTouchDevice } from "./hooks/useIsMobile";
+import { useIsMobile } from "./hooks/useIsMobile";
 
 const API_URL = "https://tasktracker-api.happymeadow-f4db95a5.eastus2.azurecontainerapps.io";
 
@@ -93,19 +93,20 @@ function MuteToggle({ muted, onToggle }) {
         color: "var(--text-secondary)",
         border: "1px solid var(--panel-border)",
         borderRadius: 99,
-        padding: "6px 10px",
-        fontSize: 14,
+        padding: 8,
         cursor: "pointer",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
       }}
     >
-      {muted ? "🔇" : "🔊"}
+      {muted ? <VolumeX size={16} /> : <Volume2 size={16} />}
     </motion.button>
   );
 }
 
 function AppContent() {
   const isMobile = useIsMobile();
-  const isTouch  = useIsTouchDevice();
   const [activeTab, setActiveTab] = useState("tasks");
   const [tasks, setTasks]       = useState([]);
   const [title, setTitle]       = useState("");
@@ -283,13 +284,10 @@ function AppContent() {
   const StatsPanelContents = () => (
     <>
       <div style={{ marginBottom: 12, paddingBottom: 12, borderBottom: "1px solid var(--panel-border)" }}>
-        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-          <span style={{ fontSize: 20 }}>📊</span>
-          <h2 style={{ margin: 0, fontSize: 16, fontWeight: 700, color: "var(--text-primary)" }}>
-            Productivity Pawprints
-          </h2>
-        </div>
-        <div style={{ fontSize: 11, color: "var(--text-soft)", marginTop: 4, marginLeft: 28 }}>
+        <h2 style={{ margin: 0, fontSize: 14, fontWeight: 700, color: "var(--text-primary)", letterSpacing: 1, textTransform: "uppercase" }}>
+          Overview
+        </h2>
+        <div style={{ fontSize: 11, color: "var(--text-soft)", marginTop: 4 }}>
           Your stats at a glance
         </div>
       </div>
@@ -301,9 +299,9 @@ function AppContent() {
   );
 
   const TABS = [
-    { id: "tasks", label: "Tasks",  icon: "😺" },
-    { id: "stats", label: "Stats",  icon: "📊" },
-    { id: "cat",   label: "Cat",    icon: "🐈" },
+    { id: "tasks", label: "Tasks",   Icon: ListTodo  },
+    { id: "stats", label: "Stats",   Icon: BarChart3 },
+    { id: "cat",   label: "Whiskers",Icon: Cat       },
   ];
 
   return (
@@ -321,8 +319,6 @@ function AppContent() {
         boxSizing: "border-box",
       }}
     >
-      {!isTouch && <PawCursor />}
-
       <AnimatePresence>
         {confettiBursts.map((b) => (
           <ConfettiBurst key={b.id} big={b.big} />
@@ -347,8 +343,8 @@ function AppContent() {
           zIndex: 50,
         }}
       >
-        <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-          <span style={{ fontSize: isMobile ? 22 : 24 }}>😺</span>
+        <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+          <Cat size={isMobile ? 22 : 24} color="var(--accent-primary)" strokeWidth={2} />
           <div>
             <div style={{ fontSize: isMobile ? 16 : 17, fontWeight: 700, color: "var(--text-primary)", letterSpacing: -0.3 }}>
               Cat Task Tracker
@@ -363,7 +359,7 @@ function AppContent() {
         <div style={{ display: "flex", alignItems: "center", gap: isMobile ? 6 : 10, flexWrap: "wrap" }}>
           <ThemeSwitcher />
           <MuteToggle muted={muted} onToggle={() => setMuted((m) => !m)} />
-          {!isMobile && <div style={{ fontSize: 11, color: "var(--text-muted)" }}>by Rob 🐾</div>}
+          {!isMobile && <div style={{ fontSize: 11, color: "var(--text-muted)" }}>by Rob</div>}
         </div>
       </motion.header>
 
@@ -383,32 +379,36 @@ function AppContent() {
               zIndex: 40,
             }}
           >
-            {TABS.map((t) => (
-              <motion.button
-                key={t.id}
-                whileTap={{ scale: 0.95 }}
-                onClick={() => setActiveTab(t.id)}
-                style={{
-                  flex: 1,
-                  background: activeTab === t.id ? "var(--accent-primary)" : "var(--surface-light)",
-                  color: activeTab === t.id ? "#fff" : "var(--text-secondary)",
-                  border: "1px solid var(--panel-border)",
-                  borderRadius: 10,
-                  padding: "12px 6px",
-                  fontSize: 13,
-                  fontWeight: 600,
-                  cursor: "pointer",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  gap: 6,
-                  minHeight: 44,
-                }}
-              >
-                <span style={{ fontSize: 16 }}>{t.icon}</span>
-                <span>{t.label}</span>
-              </motion.button>
-            ))}
+            {TABS.map((t) => {
+              const Icon = t.Icon;
+              const active = activeTab === t.id;
+              return (
+                <motion.button
+                  key={t.id}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={() => setActiveTab(t.id)}
+                  style={{
+                    flex: 1,
+                    background: active ? "var(--accent-primary)" : "var(--surface-light)",
+                    color: active ? "#fff" : "var(--text-secondary)",
+                    border: "1px solid var(--panel-border)",
+                    borderRadius: 10,
+                    padding: "12px 6px",
+                    fontSize: 13,
+                    fontWeight: 600,
+                    cursor: "pointer",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    gap: 6,
+                    minHeight: 44,
+                  }}
+                >
+                  <Icon size={16} strokeWidth={2.2} />
+                  <span>{t.label}</span>
+                </motion.button>
+              );
+            })}
           </div>
 
           {/* Mobile content */}

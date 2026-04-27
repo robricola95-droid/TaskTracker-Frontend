@@ -1,67 +1,106 @@
 # Custom Illustrations
 
-Drop your Adobe Illustrator (or other vector) artwork here — they become live React components.
+This folder is where you drop your custom artwork — Lottie animations or Illustrator SVGs.
 
-## Quickest path: Save SVG from Illustrator
+## Folder Structure
 
-1. In Illustrator: **File → Export → Export As...**
-2. Choose format **SVG**
-3. In the SVG Options dialog:
+```
+src/illustrations/
+├── lotties/         <- drop Lottie .json files here
+└── *.svg            <- drop Illustrator SVGs here
+```
+
+---
+
+## Lottie Animations (recommended for animated cats)
+
+Lottie files are tiny vector animations created in After Effects or designed in tools like LottieFiles.
+
+### How to find a free Lottie animation
+
+1. Go to **https://lottiefiles.com/free-animations/cat**
+2. Pick one you like
+3. Click the download icon → choose **"Lottie JSON"**
+4. Save it into `src/illustrations/lotties/` (e.g. `sleeping-cat.json`)
+
+### How to use it
+
+Open `src/components/AnimatedCat.js` and update the `LOTTIE_SOURCES` object:
+
+```jsx
+import sleepingLottie    from "../illustrations/lotties/sleeping-cat.json";
+import curiousLottie     from "../illustrations/lotties/curious-cat.json";
+import playfulLottie     from "../illustrations/lotties/playful-cat.json";
+import celebratingLottie from "../illustrations/lotties/happy-cat.json";
+
+const LOTTIE_SOURCES = {
+  sleeping:    sleepingLottie,
+  curious:     curiousLottie,
+  playful:     playfulLottie,
+  celebrating: celebratingLottie,
+};
+```
+
+You can also load from a public URL instead of importing:
+```jsx
+const LOTTIE_SOURCES = {
+  sleeping: "https://lottie.host/abc123/animation.json",
+  // ...
+};
+```
+
+If a state has no Lottie set (`null`), the app falls back to the minimalist line-art SVG cat.
+
+---
+
+## Custom SVG from Illustrator
+
+1. In Illustrator: **File → Export → Export As...** → **SVG**
+2. SVG Options:
    - **Styling**: Inline Style
-   - **Font**: Convert to Outline
    - **Object IDs**: Layer Names
    - **Decimal**: 2
    - **Minify**: ON
    - **Responsive**: ON
-4. Save into this folder, e.g. `src/illustrations/my-cat.svg`
+3. Save into `src/illustrations/`, e.g. `my-logo.svg`
 
-## Using it in React
+### Use as a React component
 
-Two ways:
-
-### Option A: Import as a React component (recommended)
 ```jsx
-import { ReactComponent as MyCat } from "./illustrations/my-cat.svg";
+import { ReactComponent as MyLogo } from "./illustrations/my-logo.svg";
 
-<MyCat width={200} height={200} />
+<MyLogo width={120} height={120} />
 ```
 
-This is the magic move — your SVG becomes a real React component you can size, color, and animate.
+This is the magic move — your SVG becomes a real React component you can size, animate, recolor.
 
-### Option B: Import as an image URL
-```jsx
-import myCat from "./illustrations/my-cat.svg";
-
-<img src={myCat} alt="Custom cat" width={200} />
-```
-
-## Animating your SVG
-
-Wrap it with `motion()` from Framer Motion:
+### Animate it
 
 ```jsx
 import { motion } from "framer-motion";
-import { ReactComponent as MyCat } from "./illustrations/my-cat.svg";
+import { ReactComponent as MyLogo } from "./illustrations/my-logo.svg";
 
-const MotionCat = motion(MyCat);
+const MotionLogo = motion(MyLogo);
 
-<MotionCat
-  animate={{ rotate: [0, 5, -5, 0], y: [0, -10, 0] }}
+<MotionLogo
+  animate={{ rotate: [0, 5, -5, 0] }}
   transition={{ duration: 2, repeat: Infinity }}
 />
 ```
 
-## Recoloring an SVG with CSS
+### Recolor it dynamically
 
-If you saved your SVG with `currentColor` or no fill, you can recolor it from React:
+If your SVG was saved with `currentColor` for fills/strokes, you can change colors from CSS:
 
 ```jsx
-<MyCat style={{ color: "#fdcb6e", width: 200 }} />
+<MyLogo style={{ color: "var(--accent-primary)" }} />
 ```
+
+---
 
 ## Tips
 
-- Keep file sizes small — under 50KB per illustration is ideal
-- Use **flat shapes**, not raster effects (drop shadows, blur become huge)
-- Name your SVG layers in Illustrator clearly — they become DOM IDs you can target
-- Round paths to whole pixels for crisp rendering
+- Lottie files: aim for **under 200 KB** each
+- SVG files: prefer flat shapes, avoid raster effects (drop shadows, blur)
+- Name layers cleanly in Illustrator — they become DOM IDs you can target
+- For maximum control, use Lottie for animation + SVG for static art

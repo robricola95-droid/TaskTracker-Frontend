@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { RefreshCw, Lightbulb, MapPin } from "lucide-react";
 
 export default function DailyCat() {
   const [photoUrl, setPhotoUrl]   = useState(null);
@@ -22,7 +23,6 @@ export default function DailyCat() {
       })
       .catch(() => {
         if (cancelled) return;
-        // Fallback: any cat photo without breed info
         return fetch("https://api.thecatapi.com/v1/images/search")
           .then((r) => r.json())
           .then((d) => !cancelled && setPhotoUrl(d?.[0]?.url || null))
@@ -39,28 +39,29 @@ export default function DailyCat() {
   }, [refreshKey]);
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: 14, height: "100%" }}>
-      <div style={{ textAlign: "center" }}>
-        <div style={{ fontSize: 11, color: "var(--text-secondary)", letterSpacing: 1.5, textTransform: "uppercase", fontWeight: 600 }}>
-          🐈 Daily Whiskers
+    <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+      <div>
+        <div style={{ fontSize: 10, color: "var(--text-secondary)", letterSpacing: 1.8, textTransform: "uppercase", fontWeight: 600 }}>
+          Daily Whiskers
         </div>
-        <div style={{ fontSize: 12, color: "var(--text-soft)", marginTop: 4 }}>Your reward for being awesome</div>
+        <div style={{ fontSize: 12, color: "var(--text-soft)", marginTop: 4 }}>
+          A new feline every visit
+        </div>
       </div>
 
       <motion.div
         key={photoUrl}
-        initial={{ opacity: 0, scale: 0.92 }}
+        initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 0.5 }}
+        transition={{ duration: 0.4 }}
         style={{
           position: "relative",
           width: "100%",
           aspectRatio: "1 / 1",
-          borderRadius: 18,
+          borderRadius: 16,
           overflow: "hidden",
-          border: "2px solid var(--surface-border)",
+          border: "1px solid var(--panel-border)",
           background: "var(--surface-light)",
-          boxShadow: "0 10px 30px rgba(108,92,231,0.25)",
         }}
       >
         {loading ? (
@@ -68,8 +69,9 @@ export default function DailyCat() {
             <motion.div
               animate={{ rotate: 360 }}
               transition={{ repeat: Infinity, duration: 1, ease: "linear" }}
-              style={{ fontSize: 32 }}
-            >🐾</motion.div>
+            >
+              <RefreshCw size={28} color="var(--accent-primary)" strokeWidth={2} />
+            </motion.div>
           </div>
         ) : photoUrl ? (
           <>
@@ -94,19 +96,20 @@ export default function DailyCat() {
                 }}
               >
                 <div style={{ fontSize: 14, fontWeight: 700, letterSpacing: 0.3 }}>
-                  🐾 {breed.name}
+                  {breed.name}
                 </div>
                 {breed.origin && (
-                  <div style={{ fontSize: 11, opacity: 0.85, marginTop: 2 }}>
-                    From {breed.origin}
+                  <div style={{ fontSize: 11, opacity: 0.85, marginTop: 3, display: "flex", alignItems: "center", gap: 4 }}>
+                    <MapPin size={10} strokeWidth={2.5} />
+                    {breed.origin}
                   </div>
                 )}
               </motion.div>
             )}
           </>
         ) : (
-          <div style={{ display: "flex", height: "100%", alignItems: "center", justifyContent: "center", fontSize: 60 }}>
-            😿
+          <div style={{ display: "flex", height: "100%", alignItems: "center", justifyContent: "center", color: "var(--text-muted)", fontSize: 12 }}>
+            Couldn't load a cat
           </div>
         )}
       </motion.div>
@@ -122,10 +125,10 @@ export default function DailyCat() {
               background: "var(--surface-light)",
               border: "1px solid var(--panel-border)",
               borderRadius: 10,
-              padding: "8px 10px",
+              padding: "10px 12px",
             }}
           >
-            <div style={{ fontSize: 10, color: "var(--text-secondary)", textTransform: "uppercase", letterSpacing: 1, marginBottom: 4 }}>
+            <div style={{ fontSize: 9, color: "var(--text-secondary)", textTransform: "uppercase", letterSpacing: 1.5, marginBottom: 6, fontWeight: 600 }}>
               Personality
             </div>
             <div style={{ display: "flex", flexWrap: "wrap", gap: 4 }}>
@@ -134,11 +137,12 @@ export default function DailyCat() {
                   key={i}
                   style={{
                     fontSize: 10,
-                    background: "var(--accent-primary)20",
-                    color: "var(--accent-secondary)",
-                    padding: "2px 8px",
+                    background: "var(--accent-primary)",
+                    color: "#fff",
+                    padding: "3px 9px",
                     borderRadius: 99,
-                    fontWeight: 600,
+                    fontWeight: 500,
+                    opacity: 0.85,
                   }}
                 >
                   {trait.trim()}
@@ -154,23 +158,26 @@ export default function DailyCat() {
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         style={{
-          background: "linear-gradient(135deg, rgba(255,158,184,0.1), rgba(253,203,110,0.1))",
-          border: "1px solid var(--surface-border)",
-          borderRadius: 14,
+          background: "var(--surface-light)",
+          border: "1px solid var(--panel-border)",
+          borderRadius: 12,
           padding: 12,
         }}
       >
-        <div style={{ fontSize: 10, color: "var(--accent-pink)", letterSpacing: 1.5, textTransform: "uppercase", marginBottom: 6, fontWeight: 700 }}>
-          💡 Did you know?
+        <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 6 }}>
+          <Lightbulb size={12} color="var(--accent-warm)" strokeWidth={2.4} />
+          <div style={{ fontSize: 9, color: "var(--text-secondary)", letterSpacing: 1.5, textTransform: "uppercase", fontWeight: 600 }}>
+            Did you know
+          </div>
         </div>
-        <div style={{ fontSize: 12, color: "var(--text-primary)", lineHeight: 1.5, fontStyle: "italic" }}>
-          {fact || "Loading a fun fact..."}
+        <div style={{ fontSize: 12, color: "var(--text-primary)", lineHeight: 1.55 }}>
+          {fact || "Loading..."}
         </div>
       </motion.div>
 
       <motion.button
-        whileHover={{ scale: 1.04 }}
-        whileTap={{ scale: 0.95 }}
+        whileHover={{ scale: 1.02 }}
+        whileTap={{ scale: 0.97 }}
         onClick={() => setRefreshKey((k) => k + 1)}
         disabled={loading}
         style={{
@@ -183,11 +190,15 @@ export default function DailyCat() {
           fontWeight: 600,
           cursor: loading ? "not-allowed" : "pointer",
           opacity: loading ? 0.5 : 1,
-          marginTop: "auto",
           letterSpacing: 0.3,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          gap: 8,
         }}
       >
-        🐱 Pet a different cat
+        <RefreshCw size={14} strokeWidth={2.3} />
+        New cat
       </motion.button>
     </div>
   );

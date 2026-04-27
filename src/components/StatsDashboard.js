@@ -1,28 +1,35 @@
 import React, { useMemo } from "react";
 import { motion } from "framer-motion";
 import { BarChart, Bar, XAxis, YAxis, ResponsiveContainer, Cell, Tooltip } from "recharts";
+import { CheckCircle2, Circle, ListChecks, Flame, Trophy } from "lucide-react";
 
-function StatCard({ label, value, icon, color, delay = 0 }) {
+function StatCard({ label, value, Icon, color, delay = 0 }) {
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay, type: "spring", stiffness: 120 }}
-      whileHover={{ scale: 1.05, y: -4 }}
+      whileHover={{ scale: 1.04, y: -3 }}
       style={{
         background: "var(--surface-light)",
-        border: `1px solid ${color}40`,
+        border: `1px solid ${color}33`,
         borderRadius: 14,
-        padding: "16px 14px",
-        textAlign: "center",
-        backdropFilter: "blur(8px)",
+        padding: "14px 12px",
+        textAlign: "left",
         cursor: "default",
+        display: "flex",
+        flexDirection: "column",
+        gap: 4,
       }}
     >
-      <div style={{ fontSize: 26, marginBottom: 4 }}>{icon}</div>
-      <div style={{ fontSize: 26, fontWeight: 700, color, lineHeight: 1 }}>{value}</div>
-      <div style={{ fontSize: 11, color: "var(--text-secondary)", marginTop: 6, textTransform: "uppercase", letterSpacing: 1 }}>
-        {label}
+      <div style={{ display: "flex", alignItems: "center", gap: 6, color }}>
+        <Icon size={14} strokeWidth={2.4} />
+        <span style={{ fontSize: 10, color: "var(--text-secondary)", textTransform: "uppercase", letterSpacing: 1.2, fontWeight: 600 }}>
+          {label}
+        </span>
+      </div>
+      <div style={{ fontSize: 26, fontWeight: 700, color: "var(--text-primary)", lineHeight: 1, marginTop: 2 }}>
+        {value}
       </div>
     </motion.div>
   );
@@ -47,6 +54,24 @@ function buildWeeklyData(tasks) {
   });
 }
 
+function getEncouragement(progressPct, taskCount) {
+  if (progressPct === 100 && taskCount > 0) return "All clear for the day";
+  if (progressPct >= 75)                    return "Almost there";
+  if (progressPct >= 50)                    return "Halfway done";
+  if (progressPct >= 25)                    return "Steady progress";
+  if (progressPct > 0)                      return "Off to a start";
+  return "Add a task to begin";
+}
+
+function getAchievement(progressPct, taskCount, streak) {
+  if (progressPct === 100 && taskCount >= 5) return "Productivity Master";
+  if (progressPct === 100 && taskCount > 0)  return "Inbox Zero";
+  if (streak >= 5)                           return "Streak Keeper";
+  if (taskCount >= 10)                       return "Task Collector";
+  if (taskCount > 0)                         return "Getting Started";
+  return "Awaiting input";
+}
+
 export default function StatsDashboard({ tasks }) {
   const completedCount = tasks.filter((t) => t.completed).length;
   const activeCount    = tasks.length - completedCount;
@@ -59,37 +84,35 @@ export default function StatsDashboard({ tasks }) {
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 18 }}>
       <div style={{ textAlign: "center" }}>
-        <div style={{ fontSize: 11, color: "var(--text-secondary)", letterSpacing: 1.5, textTransform: "uppercase", marginBottom: 6 }}>
-          Daily Progress
+        <div style={{ fontSize: 10, color: "var(--text-secondary)", letterSpacing: 1.8, textTransform: "uppercase", marginBottom: 6, fontWeight: 600 }}>
+          Today's Progress
         </div>
         <motion.div
           key={progressPct}
-          initial={{ scale: 0.8, opacity: 0 }}
+          initial={{ scale: 0.85, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           style={{
             fontSize: 56,
             fontWeight: 800,
-            background: "linear-gradient(135deg, #6C5CE7, #fdcb6e, #ff9eb8)",
+            background: "linear-gradient(135deg, var(--accent-primary), var(--accent-warm), var(--accent-pink))",
             backgroundClip: "text",
             WebkitBackgroundClip: "text",
             color: "transparent",
             lineHeight: 1,
           }}
         >
-          {progressPct}<span style={{ fontSize: 28 }}>%</span>
+          {progressPct}<span style={{ fontSize: 26 }}>%</span>
         </motion.div>
-        <div style={{ fontSize: 13, color: "var(--text-soft)", marginTop: 4 }}>
-          {progressPct === 100 && tasks.length > 0 ? "Purrfect day! 🐾" :
-           progressPct >= 50 ? "You're on fire! 🔥" :
-           progressPct > 0 ? "Keep going! 💪" : "Let's get started! ✨"}
+        <div style={{ fontSize: 12, color: "var(--text-soft)", marginTop: 6, fontStyle: "italic" }}>
+          {getEncouragement(progressPct, tasks.length)}
         </div>
       </div>
 
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
-        <StatCard label="Done"    value={completedCount} icon="🐟" color="#00b894" delay={0.05} />
-        <StatCard label="Active"  value={activeCount}    icon="🧶" color="#fdcb6e" delay={0.1} />
-        <StatCard label="Total"   value={tasks.length}   icon="📋" color="#a29bfe" delay={0.15} />
-        <StatCard label="Streak"  value={streak}         icon="🔥" color="#ff9eb8" delay={0.2} />
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>
+        <StatCard label="Completed" value={completedCount} Icon={CheckCircle2} color="#00b894" delay={0.05} />
+        <StatCard label="Active"    value={activeCount}    Icon={Circle}       color="#fdcb6e" delay={0.10} />
+        <StatCard label="Total"     value={tasks.length}   Icon={ListChecks}   color="#a29bfe" delay={0.15} />
+        <StatCard label="Streak"    value={streak}         Icon={Flame}        color="#ff9eb8" delay={0.20} />
       </div>
 
       <motion.div
@@ -103,27 +126,27 @@ export default function StatsDashboard({ tasks }) {
           padding: 14,
         }}
       >
-        <div style={{ fontSize: 11, color: "var(--text-secondary)", letterSpacing: 1.5, textTransform: "uppercase", marginBottom: 10, textAlign: "center" }}>
-          🐾 Paw Prints This Week
+        <div style={{ fontSize: 10, color: "var(--text-secondary)", letterSpacing: 1.8, textTransform: "uppercase", marginBottom: 12, fontWeight: 600 }}>
+          This Week
         </div>
-        <div style={{ width: "100%", height: 120 }}>
+        <div style={{ width: "100%", height: 110 }}>
           <ResponsiveContainer>
             <BarChart data={weeklyData} margin={{ top: 5, right: 5, left: -25, bottom: 0 }}>
-              <XAxis dataKey="day" tick={{ fill: "#7B68EE", fontSize: 11 }} axisLine={false} tickLine={false} />
-              <YAxis tick={{ fill: "#7B68EE", fontSize: 10 }} axisLine={false} tickLine={false} domain={[0, maxWeekly + 1]} />
+              <XAxis dataKey="day" tick={{ fill: "var(--text-soft)", fontSize: 10 }} axisLine={false} tickLine={false} />
+              <YAxis tick={{ fill: "var(--text-soft)", fontSize: 9 }} axisLine={false} tickLine={false} domain={[0, maxWeekly + 1]} />
               <Tooltip
                 cursor={{ fill: "rgba(108,92,231,0.1)" }}
                 contentStyle={{
-                  background: "rgba(20,15,40,0.95)",
-                  border: "1px solid rgba(108,92,231,0.4)",
+                  background: "var(--bg-panel)",
+                  border: "1px solid var(--panel-border)",
                   borderRadius: 8,
                   fontSize: 12,
-                  color: "#fff",
+                  color: "var(--text-primary)",
                 }}
               />
               <Bar dataKey="completed" radius={[6, 6, 0, 0]}>
                 {weeklyData.map((entry, i) => (
-                  <Cell key={i} fill={entry.isToday ? "#fdcb6e" : "#6C5CE7"} />
+                  <Cell key={i} fill={entry.isToday ? "var(--accent-warm)" : "var(--accent-primary)"} />
                 ))}
               </Bar>
             </BarChart>
@@ -136,23 +159,34 @@ export default function StatsDashboard({ tasks }) {
         animate={{ opacity: 1 }}
         transition={{ delay: 0.4 }}
         style={{
-          background: "linear-gradient(135deg, rgba(108,92,231,0.15), rgba(253,203,110,0.1))",
-          border: "1px solid rgba(108,92,231,0.3)",
+          background: "linear-gradient(135deg, rgba(108,92,231,0.12), rgba(253,203,110,0.08))",
+          border: "1px solid var(--panel-border)",
           borderRadius: 14,
-          padding: 12,
-          textAlign: "center",
+          padding: "12px 14px",
+          display: "flex",
+          alignItems: "center",
+          gap: 12,
         }}
       >
-        <div style={{ fontSize: 11, color: "var(--text-secondary)", letterSpacing: 1.5, textTransform: "uppercase", marginBottom: 6 }}>
-          🏆 Achievement
+        <div style={{
+          width: 36,
+          height: 36,
+          borderRadius: "50%",
+          background: "var(--accent-primary)",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          flexShrink: 0,
+        }}>
+          <Trophy size={18} color="#fff" strokeWidth={2.2} />
         </div>
-        <div style={{ fontSize: 14, color: "#fff", fontWeight: 600 }}>
-          {progressPct === 100 && tasks.length >= 5 ? "Productive Cat 🐱👑" :
-           progressPct === 100 && tasks.length > 0  ? "Tidy Tails 🐾"        :
-           streak >= 5                              ? "Streak Master 🔥"     :
-           tasks.length >= 10                       ? "Task Hoarder 📚"      :
-           tasks.length > 0                         ? "Getting Started 🌱"   :
-                                                      "Empty Bowl 🥣"}
+        <div>
+          <div style={{ fontSize: 9, color: "var(--text-secondary)", letterSpacing: 1.5, textTransform: "uppercase", fontWeight: 600 }}>
+            Achievement
+          </div>
+          <div style={{ fontSize: 13, color: "var(--text-primary)", fontWeight: 600, marginTop: 2 }}>
+            {getAchievement(progressPct, tasks.length, streak)}
+          </div>
         </div>
       </motion.div>
     </div>
