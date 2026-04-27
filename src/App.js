@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef, useMemo } from "react";
 import { motion, AnimatePresence, useAnimation } from "framer-motion";
 
-const API_URL = "<https://tasktracker-api.happymeadow-f4db95a5.eastus2.azurecontainerapps.io>";
+const API_URL = "https://tasktracker-api.happymeadow-f4db95a5.eastus2.azurecontainerapps.io";
 
 const CONFETTI_COLORS = ["#6C5CE7", "#a29bfe", "#00b894", "#fdcb6e", "#e17055", "#fd79a8", "#74b9ff", "#ffeaa7"];
 
@@ -30,7 +30,7 @@ function ConfettiBurst({ big }) {
     <div style={{ position: "fixed", inset: 0, pointerEvents: "none", zIndex: 999, overflow: "hidden" }}>
       {particles.map((p) => (
         <motion.div
-          key={<p.id>}
+          key={p.id}
           initial={{ x: 0, y: 0, opacity: 1, rotate: 0, scale: 1 }}
           animate={{ x: p.dx, y: p.dy + 480, opacity: 0, rotate: p.rotate, scale: 0.4 }}
           transition={{ duration: p.duration, ease: [0.15, 0.8, 0.4, 1] }}
@@ -65,7 +65,7 @@ export default function App() {
     const burst = { id: Date.now() + Math.random(), big };
     setConfettiBursts((prev) => [...prev, burst]);
     setTimeout(() => {
-      setConfettiBursts((prev) => prev.filter((b) => <b.id> !== <burst.id>));
+      setConfettiBursts((prev) => prev.filter((b) => b.id !== burst.id));
     }, 2200);
   };
 
@@ -116,20 +116,20 @@ export default function App() {
   const deleteTask = async (id) => {
     try {
       await fetch(API_URL + "/api/tasks/" + id, { method: "DELETE" });
-      setTasks(prev => prev.filter(t => <t.id> !== id));
+      setTasks(prev => prev.filter(t => t.id !== id));
     } catch (e) { console.error(e); }
   };
 
   const toggleTask = async (id) => {
-    const task = tasks.find((t) => <t.id> === id);
+    const task = tasks.find((t) => t.id === id);
     const isCompleting = task && !task.completed;
     if (isCompleting) {
-      const willBeAllDone = tasks.length > 0 && tasks.every((t) => <t.id> === id || t.completed);
+      const willBeAllDone = tasks.length > 0 && tasks.every((t) => t.id === id || t.completed);
       triggerConfetti(willBeAllDone);
     }
 
     const updatedTask = { ...task, completed: !task.completed };
-    setTasks((prev) => prev.map((t) => (<t.id> === id ? updatedTask : t)));
+    setTasks((prev) => prev.map((t) => (t.id === id ? updatedTask : t)));
 
     try {
       await fetch(API_URL + "/api/tasks/" + id, {
@@ -156,7 +156,7 @@ export default function App() {
     <div className="animated-bg" style={{ minHeight: "100vh", fontFamily: "sans-serif", padding: "2rem 1rem" }}>
       <AnimatePresence>
         {confettiBursts.map((b) => (
-          <ConfettiBurst key={<b.id>} big={b.big} />
+          <ConfettiBurst key={b.id} big={b.big} />
         ))}
       </AnimatePresence>
       <div style={{ maxWidth: "620px", margin: "0 auto" }}>
@@ -306,7 +306,7 @@ export default function App() {
               <AnimatePresence mode="popLayout">
                 {filteredTasks.map((task) => (
                   <motion.div
-                    key={<task.id>}
+                    key={task.id}
                     layout
                     initial={{ opacity: 0, y: -16, scale: 0.96 }}
                     animate={{ opacity: 1, y: 0, scale: 1 }}
@@ -327,7 +327,7 @@ export default function App() {
                     <motion.div
                       whileHover={{ scale: 1.15 }}
                       whileTap={{ scale: 0.88 }}
-                      onClick={() => toggleTask(<task.id>)}
+                      onClick={() => toggleTask(task.id)}
                       style={{
                         width: "24px", height: "24px", borderRadius: "50%", flexShrink: 0,
                         border: task.completed ? "none" : "2px solid rgba(108,92,231,0.6)",
@@ -352,7 +352,7 @@ export default function App() {
 
                     {/* Title */}
                     <span
-                      onClick={() => toggleTask(<task.id>)}
+                      onClick={() => toggleTask(task.id)}
                       style={{
                         flex: 1, fontSize: "15px", cursor: "pointer",
                         color: task.completed ? "#7B68EE" : "#e8e6f0",
@@ -367,7 +367,7 @@ export default function App() {
                     <motion.button
                       whileHover={{ scale: 1.1, background: "rgba(231,76,60,0.3)" }}
                       whileTap={{ scale: 0.9 }}
-                      onClick={() => deleteTask(<task.id>)}
+                      onClick={() => deleteTask(task.id)}
                       style={{
                         marginLeft: "12px", background: "rgba(231,76,60,0.12)", color: "#e74c3c",
                         fontSize: "18px", lineHeight: 1, padding: "4px 10px", borderRadius: "8px",
