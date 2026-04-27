@@ -13,7 +13,7 @@ function StatCard({ label, value, Icon, color, delay = 0 }) {
       style={{
         background: "var(--surface-light)",
         border: `1px solid ${color}33`,
-        borderRadius: 14,
+        borderRadius: 2,
         padding: "14px 12px",
         textAlign: "left",
         cursor: "default",
@@ -122,7 +122,7 @@ export default function StatsDashboard({ tasks }) {
         style={{
           background: "var(--surface-light)",
           border: "1px solid var(--panel-border)",
-          borderRadius: 14,
+          borderRadius: 2,
           padding: 14,
         }}
       >
@@ -139,12 +139,12 @@ export default function StatsDashboard({ tasks }) {
                 contentStyle={{
                   background: "var(--bg-panel)",
                   border: "1px solid var(--panel-border)",
-                  borderRadius: 8,
+                  borderRadius: 0,
                   fontSize: 12,
                   color: "var(--text-primary)",
                 }}
               />
-              <Bar dataKey="completed" radius={[6, 6, 0, 0]}>
+              <Bar dataKey="completed" radius={0}>
                 {weeklyData.map((entry, i) => (
                   <Cell key={i} fill={entry.isToday ? "var(--accent-warm)" : "var(--accent-primary)"} />
                 ))}
@@ -161,7 +161,7 @@ export default function StatsDashboard({ tasks }) {
         style={{
           background: "linear-gradient(135deg, rgba(108,92,231,0.12), rgba(253,203,110,0.08))",
           border: "1px solid var(--panel-border)",
-          borderRadius: 14,
+          borderRadius: 2,
           padding: "12px 14px",
           display: "flex",
           alignItems: "center",
@@ -171,7 +171,7 @@ export default function StatsDashboard({ tasks }) {
         <div style={{
           width: 36,
           height: 36,
-          borderRadius: "50%",
+          borderRadius: 0,
           background: "var(--accent-primary)",
           display: "flex",
           alignItems: "center",

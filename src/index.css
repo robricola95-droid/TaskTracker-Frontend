@@ -10,12 +10,12 @@ html, body {
 }
 
 body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+  font-family: 'IBM Plex Mono', ui-monospace, 'SF Mono', 'Cascadia Code', 'JetBrains Mono', Menlo, Consolas, monospace;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   -webkit-tap-highlight-color: transparent;
   overscroll-behavior-y: none;
+  letter-spacing: -0.01em;
 }
 
 #root {
@@ -23,18 +23,18 @@ body {
   min-height: 100dvh;
 }
 
-/* iOS: prevent input zoom on focus by enforcing 16px minimum */
+/* iOS: prevent input zoom on focus */
 input, textarea, select {
   font-size: 16px;
+  font-family: inherit;
 }
 
-/* Reduce icon font sizes on small screens but keep inputs at 16px */
 @media (max-width: 900px) {
-  body { font-size: 14px; }
+  body { font-size: 13px; }
   input, textarea, select { font-size: 16px !important; }
 }
 
-/* Safe area insets for iPhone notch / home indicator */
+/* Safe area insets */
 @supports (padding: max(0px)) {
   .safe-top    { padding-top:    max(8px,  env(safe-area-inset-top)); }
   .safe-bottom { padding-bottom: max(12px, env(safe-area-inset-bottom)); }
@@ -44,11 +44,11 @@ input, textarea, select {
 :root,
 [data-theme="dark"] {
   --bg-page-1: #1a1a1a;
-  --bg-page-2: #262626;
-  --bg-page-3: #1f1f1f;
-  --bg-page-4: #2a2a2a;
-  --bg-panel: rgba(28,28,28,0.92);
-  --panel-border: rgba(255,255,255,0.14);
+  --bg-page-2: #1a1a1a;
+  --bg-page-3: #1a1a1a;
+  --bg-page-4: #1a1a1a;
+  --bg-panel: #242424;
+  --panel-border: #3a3a3a;
   --text-primary: #f0f0f0;
   --text-secondary: #b8b8b8;
   --text-muted: #707070;
@@ -58,8 +58,8 @@ input, textarea, select {
   --accent-warm: #d4a017;
   --accent-pink: #b85a4a;
   --surface-light: rgba(255,255,255,0.04);
-  --surface-input: rgba(255,255,255,0.06);
-  --surface-border: rgba(255,255,255,0.18);
+  --surface-input: #2c2c2c;
+  --surface-border: #3a3a3a;
 }
 
 /* ===== THEME: LIGHT ===== */
@@ -69,7 +69,7 @@ input, textarea, select {
   --bg-page-3: #fff5f9;
   --bg-page-4: #ffeae3;
   --bg-panel: rgba(255,255,255,0.85);
-  --panel-border: rgba(108,92,231,0.15);
+  --panel-border: rgba(108,92,231,0.25);
   --text-primary: #1a1235;
   --text-secondary: #6C5CE7;
   --text-muted: #6b6888;
@@ -80,7 +80,7 @@ input, textarea, select {
   --accent-pink: #ff9eb8;
   --surface-light: rgba(108,92,231,0.06);
   --surface-input: rgba(255,255,255,0.7);
-  --surface-border: rgba(108,92,231,0.2);
+  --surface-border: rgba(108,92,231,0.3);
 }
 
 /* ===== THEME: CATMODE (mocha desert) ===== */
@@ -90,7 +90,7 @@ input, textarea, select {
   --bg-page-3: #f4e7d2;
   --bg-page-4: #c89c6e;
   --bg-panel: rgba(255,250,240,0.82);
-  --panel-border: rgba(139,90,43,0.22);
+  --panel-border: rgba(139,90,43,0.4);
   --text-primary: #3d2817;
   --text-secondary: #8b5a2b;
   --text-muted: #a08570;
@@ -101,9 +101,10 @@ input, textarea, select {
   --accent-pink: #c97a5e;
   --surface-light: rgba(139,90,43,0.07);
   --surface-input: rgba(255,250,240,0.7);
-  --surface-border: rgba(139,90,43,0.22);
+  --surface-border: rgba(139,90,43,0.35);
 }
 
+/* ===== Animated bg (only for non-dark themes) ===== */
 @keyframes gradientShift {
   0%   { background-position: 0% 50%; }
   50%  { background-position: 100% 50%; }
@@ -114,34 +115,65 @@ input, textarea, select {
   background: linear-gradient(-45deg, var(--bg-page-1), var(--bg-page-2), var(--bg-page-3), var(--bg-page-4), var(--bg-page-1));
   background-size: 400% 400%;
   animation: gradientShift 14s ease infinite;
-  transition: background 0.6s ease;
 }
 
-@keyframes glow-pulse {
-  0%, 100% { box-shadow: 0 0 8px rgba(108, 92, 231, 0.4); }
-  50%      { box-shadow: 0 0 24px rgba(108, 92, 231, 0.9); }
+/* Dark theme: flat concrete + noise overlay */
+[data-theme="dark"] .animated-bg,
+:root .animated-bg {
+  background: #1a1a1a;
+  animation: none;
+  position: relative;
 }
 
-.glow { animation: glow-pulse 2.5s ease-in-out infinite; }
+[data-theme="dark"] .animated-bg::before,
+:root .animated-bg::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+  opacity: 0.5;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.92' numOctaves='2' stitchTiles='stitch'/><feColorMatrix type='matrix' values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 0.06 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+}
 
-input::placeholder { color: var(--text-muted); opacity: 0.7; }
+[data-theme="light"] .animated-bg::before,
+[data-theme="catmode"] .animated-bg::before {
+  display: none;
+}
+
+input::placeholder { color: var(--text-muted); opacity: 0.6; }
 input:focus { outline: none; }
 
-::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar { width: 8px; height: 8px; }
 ::-webkit-scrollbar-track { background: var(--surface-light); }
-::-webkit-scrollbar-thumb {
-  background: var(--accent-primary);
-  border-radius: 3px;
-  opacity: 0.5;
-}
+::-webkit-scrollbar-thumb { background: var(--accent-primary); border-radius: 0; }
 
-/* Smooth theme transition (skip transform/position to avoid jank) */
 button, input, [data-themed] {
-  transition: background-color 0.4s ease, border-color 0.4s ease, color 0.3s ease;
+  transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
 }
 
-/* Backdrop filter cross-browser */
 .bg-panel-blur {
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+/* Brutalist global override: kill all rounding on key elements */
+button, input, select, textarea {
+  border-radius: 2px !important;
+}
+
+kbd {
+  font-family: inherit;
+  border: 1px solid var(--panel-border);
+  padding: 1px 5px;
+  background: var(--surface-light);
+  border-radius: 0 !important;
+  font-size: 0.85em;
+  text-transform: uppercase;
+}
+
+/* Make headings tighter and uppercase-friendly */
+h1, h2, h3, h4 {
+  letter-spacing: -0.01em;
+  font-weight: 700;
 }

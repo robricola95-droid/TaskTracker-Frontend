@@ -92,7 +92,7 @@ function MuteToggle({ muted, onToggle }) {
         background: "var(--surface-light)",
         color: "var(--text-secondary)",
         border: "1px solid var(--panel-border)",
-        borderRadius: 99,
+        borderRadius: 2,
         padding: 8,
         cursor: "pointer",
         display: "flex",
@@ -260,8 +260,8 @@ function AppContent() {
 
   const panelStyle = {
     background: "var(--bg-panel)",
-    border: "1px solid var(--panel-border)",
-    borderRadius: 18,
+    border: "2px solid var(--panel-border)",
+    borderRadius: 2,
     padding: isMobile ? 14 : 18,
     margin: isMobile ? 6 : 8,
     height: isMobile ? "auto" : "calc(100% - 16px)",
@@ -392,7 +392,7 @@ function AppContent() {
                     background: active ? "var(--accent-primary)" : "var(--surface-light)",
                     color: active ? "#fff" : "var(--text-secondary)",
                     border: "1px solid var(--panel-border)",
-                    borderRadius: 10,
+                    borderRadius: 2,
                     padding: "12px 6px",
                     fontSize: 13,
                     fontWeight: 600,

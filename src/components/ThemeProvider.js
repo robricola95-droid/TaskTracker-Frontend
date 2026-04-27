@@ -38,7 +38,7 @@ export function ThemeSwitcher() {
       gap: 2,
       background: "var(--surface-light)",
       padding: 3,
-      borderRadius: 99,
+      borderRadius: 2,
       border: "1px solid var(--panel-border)",
     }}>
       {themes.map((t) => {
@@ -55,7 +55,7 @@ export function ThemeSwitcher() {
               background: active ? "var(--accent-primary)" : "transparent",
               color: active ? "#fff" : "var(--text-secondary)",
               border: "none",
-              borderRadius: 99,
+              borderRadius: 2,
               padding: "6px 10px",
               cursor: "pointer",
               display: "flex",

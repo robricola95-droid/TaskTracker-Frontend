@@ -55,7 +55,7 @@ function SortableTaskRow({ task, isSelected, selectionMode, onToggle, onDelete, 
         padding: "10px 12px",
         background: task.completed ? "rgba(108,92,231,0.10)" : "var(--surface-light)",
         border: `1px solid ${isSelected ? "var(--accent-primary)" : task.completed ? "rgba(108,92,231,0.3)" : "var(--panel-border)"}`,
-        borderRadius: 12,
+        borderRadius: 2,
         gap: 8,
       }}
       layout
@@ -94,9 +94,9 @@ function SortableTaskRow({ task, isSelected, selectionMode, onToggle, onDelete, 
         whileTap={{ scale: 0.88 }}
         onClick={() => onToggle(task.id)}
         style={{
-          width: 20, height: 20, borderRadius: "50%", flexShrink: 0,
+          width: 20, height: 20, borderRadius: 0, flexShrink: 0,
           border: task.completed ? "none" : "2px solid var(--accent-primary)",
-          background: task.completed ? "linear-gradient(135deg, var(--accent-primary), var(--accent-secondary))" : "transparent",
+          background: task.completed ? "var(--accent-primary)" : "transparent",
           cursor: "pointer",
           display: "flex", alignItems: "center", justifyContent: "center",
         }}
@@ -132,7 +132,7 @@ function SortableTaskRow({ task, isSelected, selectionMode, onToggle, onDelete, 
         onClick={() => onDelete(task.id)}
         style={{
           background: "rgba(231,76,60,0.1)", color: "#e74c3c",
-          padding: 6, borderRadius: 8,
+          padding: 6, borderRadius: 2,
           border: "1px solid rgba(231,76,60,0.18)", cursor: "pointer",
           display: "flex", alignItems: "center", justifyContent: "center",
         }}
@@ -241,7 +241,7 @@ export default function TaskListPanel({
                 background: selectionMode ? "var(--accent-primary)" : "var(--surface-light)",
                 color: selectionMode ? "#fff" : "var(--text-secondary)",
                 border: "1px solid var(--panel-border)",
-                borderRadius: 8,
+                borderRadius: 2,
                 padding: 7,
                 cursor: "pointer",
                 display: "flex", alignItems: "center", justifyContent: "center",
@@ -258,7 +258,7 @@ export default function TaskListPanel({
                 background: "var(--surface-light)",
                 color: "var(--text-secondary)",
                 border: "1px solid var(--panel-border)",
-                borderRadius: 8,
+                borderRadius: 2,
                 padding: 7,
                 cursor: "pointer",
                 display: "flex", alignItems: "center", justifyContent: "center",
@@ -284,7 +284,7 @@ export default function TaskListPanel({
               flex: 1,
               background: "var(--surface-input)",
               border: "1px solid var(--surface-border)",
-              borderRadius: 10,
+              borderRadius: 2,
               padding: "11px 14px",
               color: "var(--text-primary)",
               fontSize: 14,
@@ -300,7 +300,7 @@ export default function TaskListPanel({
               background: "var(--accent-primary)",
               color: "#fff",
               padding: "11px 14px",
-              borderRadius: 10,
+              borderRadius: 2,
               border: "none",
               cursor: "pointer",
               display: "flex",
@@ -349,7 +349,7 @@ export default function TaskListPanel({
             width: "100%",
             background: "var(--surface-input)",
             border: "1px solid var(--surface-border)",
-            borderRadius: 8,
+            borderRadius: 2,
             padding: "8px 12px 8px 32px",
             color: "var(--text-primary)",
             outline: "none",
@@ -383,7 +383,7 @@ export default function TaskListPanel({
               color: filter === f ? "#fff" : "var(--text-soft)",
               background: filter === f ? "var(--accent-primary)" : "var(--surface-light)",
               padding: "5px 14px",
-              borderRadius: 99,
+              borderRadius: 2,
               border: "1px solid var(--panel-border)",
               cursor: "pointer",
             }}
@@ -406,7 +406,7 @@ export default function TaskListPanel({
               padding: "8px 10px",
               marginBottom: 10,
               background: "var(--accent-primary)",
-              borderRadius: 10,
+              borderRadius: 2,
               alignItems: "center",
             }}
           >
@@ -416,12 +416,12 @@ export default function TaskListPanel({
             <motion.button
               whileTap={{ scale: 0.9 }}
               onClick={handleBulkComplete}
-              style={{ background: "rgba(255,255,255,0.25)", color: "#fff", border: "none", padding: "6px 10px", borderRadius: 6, fontSize: 11, fontWeight: 600, cursor: "pointer", display: "flex", alignItems: "center", gap: 4 }}
+              style={{ background: "rgba(255,255,255,0.25)", color: "#fff", border: "none", padding: "6px 10px", borderRadius: 0, fontSize: 11, fontWeight: 600, cursor: "pointer", display: "flex", alignItems: "center", gap: 4 }}
             ><CheckCheck size={13} strokeWidth={2.2} /> Complete</motion.button>
             <motion.button
               whileTap={{ scale: 0.9 }}
               onClick={handleBulkDelete}
-              style={{ background: "rgba(231,76,60,0.85)", color: "#fff", border: "none", padding: "6px 10px", borderRadius: 6, fontSize: 11, fontWeight: 600, cursor: "pointer", display: "flex", alignItems: "center", gap: 4 }}
+              style={{ background: "rgba(231,76,60,0.85)", color: "#fff", border: "none", padding: "6px 10px", borderRadius: 0, fontSize: 11, fontWeight: 600, cursor: "pointer", display: "flex", alignItems: "center", gap: 4 }}
             ><Trash2 size={13} strokeWidth={2.2} /> Delete</motion.button>
           </motion.div>
         )}
@@ -438,7 +438,7 @@ export default function TaskListPanel({
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
-            style={{ padding: "2.5rem 1rem", textAlign: "center", background: "var(--surface-light)", borderRadius: 14, border: "1px dashed var(--panel-border)" }}
+            style={{ padding: "2.5rem 1rem", textAlign: "center", background: "var(--surface-light)", borderRadius: 2, border: "1px dashed var(--panel-border)" }}
           >
             <div style={{ display: "flex", justifyContent: "center", marginBottom: 10, color: "var(--text-muted)" }}>
               {searchQuery ? <Search size={32} strokeWidth={1.5} /> : <Inbox size={32} strokeWidth={1.5} />}

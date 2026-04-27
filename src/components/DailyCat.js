@@ -58,7 +58,7 @@ export default function DailyCat() {
           position: "relative",
           width: "100%",
           aspectRatio: "1 / 1",
-          borderRadius: 16,
+          borderRadius: 2,
           overflow: "hidden",
           border: "1px solid var(--panel-border)",
           background: "var(--surface-light)",
@@ -124,7 +124,7 @@ export default function DailyCat() {
             style={{
               background: "var(--surface-light)",
               border: "1px solid var(--panel-border)",
-              borderRadius: 10,
+              borderRadius: 2,
               padding: "10px 12px",
             }}
           >
@@ -140,7 +140,7 @@ export default function DailyCat() {
                     background: "var(--accent-primary)",
                     color: "#fff",
                     padding: "3px 9px",
-                    borderRadius: 99,
+                    borderRadius: 0,
                     fontWeight: 500,
                     opacity: 0.85,
                   }}
@@ -160,7 +160,7 @@ export default function DailyCat() {
         style={{
           background: "var(--surface-light)",
           border: "1px solid var(--panel-border)",
-          borderRadius: 12,
+          borderRadius: 2,
           padding: 12,
         }}
       >
@@ -185,7 +185,7 @@ export default function DailyCat() {
           border: "none",
           color: "#fff",
           padding: "11px 14px",
-          borderRadius: 10,
+          borderRadius: 2,
           fontSize: 13,
           fontWeight: 600,
           cursor: loading ? "not-allowed" : "pointer",
