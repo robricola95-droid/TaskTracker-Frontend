@@ -9,6 +9,7 @@ import PawCursor from "./components/PawCursor";
 import { ThemeProvider, ThemeSwitcher } from "./components/ThemeProvider";
 import { useSoundEffects } from "./hooks/useSoundEffects";
 import { useKeyboardShortcuts } from "./hooks/useKeyboardShortcuts";
+import { useIsMobile, useIsTouchDevice } from "./hooks/useIsMobile";
 
 const API_URL = "https://tasktracker-api.happymeadow-f4db95a5.eastus2.azurecontainerapps.io";
 
@@ -103,6 +104,9 @@ function MuteToggle({ muted, onToggle }) {
 }
 
 function AppContent() {
+  const isMobile = useIsMobile();
+  const isTouch  = useIsTouchDevice();
+  const [activeTab, setActiveTab] = useState("tasks");
   const [tasks, setTasks]       = useState([]);
   const [title, setTitle]       = useState("");
   const [filter, setFilter]     = useState("all");
@@ -257,16 +261,63 @@ function AppContent() {
     background: "var(--bg-panel)",
     border: "1px solid var(--panel-border)",
     borderRadius: 18,
-    padding: 18,
-    margin: 8,
-    height: "calc(100% - 16px)",
+    padding: isMobile ? 14 : 18,
+    margin: isMobile ? 6 : 8,
+    height: isMobile ? "auto" : "calc(100% - 16px)",
     overflow: "auto",
     backdropFilter: "blur(12px)",
   };
 
+  const taskListProps = {
+    tasks, taskOrder, setTaskOrder,
+    title, setTitle, filter, setFilter,
+    errorMsg, setErrorMsg,
+    addTask, toggleTask, deleteTask,
+    bulkDelete, bulkComplete,
+    loading, justAdded,
+    inputControls, inputRef, searchRef,
+    searchQuery, setSearchQuery,
+  };
+
+  const StatsPanelContents = () => (
+    <>
+      <div style={{ marginBottom: 12, paddingBottom: 12, borderBottom: "1px solid var(--panel-border)" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+          <span style={{ fontSize: 20 }}>📊</span>
+          <h2 style={{ margin: 0, fontSize: 16, fontWeight: 700, color: "var(--text-primary)" }}>
+            Productivity Pawprints
+          </h2>
+        </div>
+        <div style={{ fontSize: 11, color: "var(--text-soft)", marginTop: 4, marginLeft: 28 }}>
+          Your stats at a glance
+        </div>
+      </div>
+      <AnimatedCat tasks={tasks} />
+      <div style={{ marginTop: 22 }}>
+        <StatsDashboard tasks={tasks} />
+      </div>
+    </>
+  );
+
+  const TABS = [
+    { id: "tasks", label: "Tasks",  icon: "😺" },
+    { id: "stats", label: "Stats",  icon: "📊" },
+    { id: "cat",   label: "Cat",    icon: "🐈" },
+  ];
+
   return (
-    <div className="animated-bg" style={{ minHeight: "100vh", height: "100vh", display: "flex", flexDirection: "column", overflow: "hidden", fontFamily: "sans-serif" }}>
-      <PawCursor />
+    <div
+      className="animated-bg"
+      style={{
+        minHeight: "100vh",
+        height: isMobile ? "auto" : "100vh",
+        display: "flex",
+        flexDirection: "column",
+        overflow: isMobile ? "auto" : "hidden",
+        fontFamily: "sans-serif",
+      }}
+    >
+      {!isTouch && <PawCursor />}
 
       <AnimatePresence>
         {confettiBursts.map((b) => (
@@ -278,84 +329,137 @@ function AppContent() {
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
         style={{
-          padding: "12px 22px",
+          padding: isMobile ? "10px 14px" : "12px 22px",
           display: "flex",
           alignItems: "center",
           justifyContent: "space-between",
           borderBottom: "1px solid var(--panel-border)",
           background: "var(--bg-panel)",
           backdropFilter: "blur(8px)",
+          flexWrap: isMobile ? "wrap" : "nowrap",
+          gap: isMobile ? 8 : 0,
+          position: isMobile ? "sticky" : "relative",
+          top: 0,
+          zIndex: 50,
         }}
       >
         <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-          <span style={{ fontSize: 24 }}>😺</span>
+          <span style={{ fontSize: isMobile ? 22 : 24 }}>😺</span>
           <div>
-            <div style={{ fontSize: 17, fontWeight: 700, color: "var(--text-primary)", letterSpacing: -0.3 }}>
+            <div style={{ fontSize: isMobile ? 16 : 17, fontWeight: 700, color: "var(--text-primary)", letterSpacing: -0.3 }}>
               Cat Task Tracker
             </div>
-            <div style={{ fontSize: 11, color: "var(--text-secondary)" }}>
-              Drag dividers · Drag tasks to reorder · Press <kbd style={{ background: "var(--surface-light)", padding: "1px 5px", borderRadius: 3 }}>?</kbd> for shortcuts
-            </div>
+            {!isMobile && (
+              <div style={{ fontSize: 11, color: "var(--text-secondary)" }}>
+                Drag dividers · Drag tasks to reorder · Press <kbd style={{ background: "var(--surface-light)", padding: "1px 5px", borderRadius: 3 }}>?</kbd> for shortcuts
+              </div>
+            )}
           </div>
         </div>
-        <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+        <div style={{ display: "flex", alignItems: "center", gap: isMobile ? 6 : 10, flexWrap: "wrap" }}>
           <ThemeSwitcher />
           <MuteToggle muted={muted} onToggle={() => setMuted((m) => !m)} />
-          <div style={{ fontSize: 11, color: "var(--text-muted)" }}>by Rob 🐾</div>
+          {!isMobile && <div style={{ fontSize: 11, color: "var(--text-muted)" }}>by Rob 🐾</div>}
         </div>
       </motion.header>
 
-      <div style={{ flex: 1, minHeight: 0 }}>
-        <PanelGroup direction="horizontal">
-          <Panel defaultSize={38} minSize={25}>
-            <div style={panelStyle}>
-              <TaskListPanel
-                tasks={tasks}
-                taskOrder={taskOrder}
-                setTaskOrder={setTaskOrder}
-                title={title} setTitle={setTitle}
-                filter={filter} setFilter={setFilter}
-                errorMsg={errorMsg} setErrorMsg={setErrorMsg}
-                addTask={addTask} toggleTask={toggleTask} deleteTask={deleteTask}
-                bulkDelete={bulkDelete} bulkComplete={bulkComplete}
-                loading={loading} justAdded={justAdded}
-                inputControls={inputControls} inputRef={inputRef} searchRef={searchRef}
-                searchQuery={searchQuery} setSearchQuery={setSearchQuery}
-              />
-            </div>
-          </Panel>
+      {isMobile ? (
+        <>
+          {/* Mobile tab bar */}
+          <div style={{
+            display: "flex",
+            gap: 4,
+            padding: "8px 10px 4px",
+            background: "var(--bg-panel)",
+            borderBottom: "1px solid var(--panel-border)",
+            position: "sticky",
+            top: 56,
+            zIndex: 40,
+            backdropFilter: "blur(8px)",
+          }}>
+            {TABS.map((t) => (
+              <motion.button
+                key={t.id}
+                whileTap={{ scale: 0.95 }}
+                onClick={() => setActiveTab(t.id)}
+                style={{
+                  flex: 1,
+                  background: activeTab === t.id ? "var(--accent-primary)" : "var(--surface-light)",
+                  color: activeTab === t.id ? "#fff" : "var(--text-secondary)",
+                  border: "1px solid var(--panel-border)",
+                  borderRadius: 10,
+                  padding: "10px 6px",
+                  fontSize: 12,
+                  fontWeight: 600,
+                  cursor: "pointer",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  gap: 6,
+                }}
+              >
+                <span style={{ fontSize: 16 }}>{t.icon}</span>
+                <span>{t.label}</span>
+              </motion.button>
+            ))}
+          </div>
 
-          <ResizeHandle />
-
-          <Panel defaultSize={36} minSize={25}>
-            <div style={panelStyle}>
-              <div style={{ marginBottom: 12, paddingBottom: 12, borderBottom: "1px solid var(--panel-border)" }}>
-                <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                  <span style={{ fontSize: 20 }}>📊</span>
-                  <h2 style={{ margin: 0, fontSize: 16, fontWeight: 700, color: "var(--text-primary)" }}>
-                    Productivity Pawprints
-                  </h2>
-                </div>
-                <div style={{ fontSize: 11, color: "var(--text-soft)", marginTop: 4, marginLeft: 28 }}>
-                  Your stats at a glance
-                </div>
+          {/* Mobile content */}
+          <div style={{ flex: 1, padding: "0 4px 80px", minHeight: 0 }}>
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={activeTab}
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -20 }}
+                transition={{ duration: 0.2 }}
+              >
+                {activeTab === "tasks" && (
+                  <div style={panelStyle}>
+                    <TaskListPanel {...taskListProps} />
+                  </div>
+                )}
+                {activeTab === "stats" && (
+                  <div style={panelStyle}>
+                    <StatsPanelContents />
+                  </div>
+                )}
+                {activeTab === "cat" && (
+                  <div style={panelStyle}>
+                    <DailyCat />
+                  </div>
+                )}
+              </motion.div>
+            </AnimatePresence>
+          </div>
+        </>
+      ) : (
+        <div style={{ flex: 1, minHeight: 0 }}>
+          <PanelGroup direction="horizontal">
+            <Panel defaultSize={38} minSize={25}>
+              <div style={panelStyle}>
+                <TaskListPanel {...taskListProps} />
               </div>
-              <AnimatedCat tasks={tasks} />
-              <div style={{ marginTop: 22 }}>
-                <StatsDashboard tasks={tasks} />
+            </Panel>
+
+            <ResizeHandle />
+
+            <Panel defaultSize={36} minSize={25}>
+              <div style={panelStyle}>
+                <StatsPanelContents />
               </div>
-            </div>
-          </Panel>
+            </Panel>
 
-          <ResizeHandle />
+            <ResizeHandle />
 
-          <Panel defaultSize={26} minSize={20}>
-            <div style={panelStyle}>
-              <DailyCat />
-            </div>
-          </Panel>
-        </PanelGroup>
-      </div>
+            <Panel defaultSize={26} minSize={20}>
+              <div style={panelStyle}>
+                <DailyCat />
+              </div>
+            </Panel>
+          </PanelGroup>
+        </div>
+      )}
     </div>
   );
 }

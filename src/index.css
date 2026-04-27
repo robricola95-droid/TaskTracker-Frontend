@@ -8,11 +8,17 @@ body {
     'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  cursor: none;
+  overscroll-behavior: none;
 }
 
-button, input, [role="button"], a {
-  cursor: none !important;
+/* Custom paw cursor only on devices with a real mouse */
+@media (hover: hover) and (pointer: fine) {
+  body { cursor: none; }
+  button, input, [role="button"], a { cursor: none !important; }
+}
+
+@media (max-width: 900px) {
+  body { font-size: 14px; }
 }
 
 /* ===== THEME: DARK (default) ===== */
