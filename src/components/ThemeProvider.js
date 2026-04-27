@@ -1,13 +1,13 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { Moon, Sun, Sparkles } from "lucide-react";
+import { Moon, Sun, Leaf } from "lucide-react";
 
 const ThemeContext = createContext({ theme: "dark", setTheme: () => {} });
 
 const THEMES = [
-  { id: "dark",    label: "Dark",    Icon: Moon,     desc: "Deep purple night" },
-  { id: "light",   label: "Light",   Icon: Sun,      desc: "Clean & bright"     },
-  { id: "catmode", label: "Catmode", Icon: Sparkles, desc: "Soft pink"          },
+  { id: "dark",    label: "Dark",    Icon: Moon, desc: "Deep purple night" },
+  { id: "light",   label: "Light",   Icon: Sun,  desc: "Clean & bright"    },
+  { id: "catmode", label: "Catmode", Icon: Leaf, desc: "Mint & sage"       },
 ];
 
 export function ThemeProvider({ children }) {

@@ -83,25 +83,25 @@ input, textarea, select {
   --surface-border: rgba(108,92,231,0.2);
 }
 
-/* ===== THEME: CATMODE (pink playful) ===== */
+/* ===== THEME: CATMODE (mint sage) ===== */
 [data-theme="catmode"] {
-  --bg-page-1: #ffd7e3;
-  --bg-page-2: #ffb6d1;
-  --bg-page-3: #ffe5cc;
-  --bg-page-4: #ffc1d1;
-  --bg-panel: rgba(255,255,255,0.78);
-  --panel-border: rgba(255,107,158,0.22);
-  --text-primary: #4a1c3a;
-  --text-secondary: #ff6b9e;
-  --text-muted: #a36889;
-  --text-soft: #ff85a8;
-  --accent-primary: #ff6b9e;
-  --accent-secondary: #ff9eb8;
-  --accent-warm: #ffaa70;
-  --accent-pink: #ff4d8d;
-  --surface-light: rgba(255,107,158,0.08);
+  --bg-page-1: #d8ebd8;
+  --bg-page-2: #b9dbc4;
+  --bg-page-3: #e8efd8;
+  --bg-page-4: #c2e0d0;
+  --bg-panel: rgba(255,255,255,0.82);
+  --panel-border: rgba(73,148,108,0.22);
+  --text-primary: #1d3a2a;
+  --text-secondary: #4c9a71;
+  --text-muted: #6b8c7a;
+  --text-soft: #5fa884;
+  --accent-primary: #4c9a71;
+  --accent-secondary: #8fc9a8;
+  --accent-warm: #f5b969;
+  --accent-pink: #e8a07e;
+  --surface-light: rgba(73,148,108,0.08);
   --surface-input: rgba(255,255,255,0.7);
-  --surface-border: rgba(255,107,158,0.25);
+  --surface-border: rgba(73,148,108,0.25);
 }
 
 @keyframes gradientShift {
