@@ -5,13 +5,17 @@ import { Moon, Sun, Coffee } from "lucide-react";
 const ThemeContext = createContext({ theme: "dark", setTheme: () => {} });
 
 const THEMES = [
-  { id: "dark",    label: "Dark",    Icon: Moon,   desc: "Deep purple night" },
-  { id: "light",   label: "Light",   Icon: Sun,    desc: "Clean & bright"    },
-  { id: "catmode", label: "Catmode", Icon: Coffee, desc: "Mocha desert"      },
+  { id: "dark",   label: "Dark",   Icon: Moon,   desc: "Brutalist concrete" },
+  { id: "light",  label: "Light",  Icon: Sun,    desc: "White & blue retro" },
+  { id: "coffee", label: "Coffee", Icon: Coffee, desc: "Mocha desert"       },
 ];
 
 export function ThemeProvider({ children }) {
-  const [theme, setTheme] = useState(() => localStorage.getItem("tt-theme") || "dark");
+  const [theme, setTheme] = useState(() => {
+    const saved = localStorage.getItem("tt-theme");
+    if (saved === "catmode") return "coffee";  // migrate legacy
+    return saved || "dark";
+  });
 
   useEffect(() => {
     document.documentElement.setAttribute("data-theme", theme);
